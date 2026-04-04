@@ -1,65 +1,149 @@
-import Image from "next/image";
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { useSamples } from "@/hooks/useSamples";
+import { useAudioEngine } from "@/hooks/useAudioEngine";
+import { useCompositionStore } from "@/store/composition";
+import { useWaveformPeaksStore } from "@/store/waveformPeaks";
+import { SampleLibrary } from "@/components/SampleLibrary";
+import { VinylDisk } from "@/components/VinylDisk";
+import { Waveform } from "@/components/Waveform";
+import { WaveformToolbar } from "@/components/WaveformToolbar";
+import { PitchControl } from "@/components/PitchControl";
+import { ExportButton } from "@/components/ExportButton";
+import type { Sample } from "@/types";
 
 export default function Home() {
+  const { samples, loading } = useSamples();
+  const composition = useCompositionStore((s) => s.composition);
+  const reset = useCompositionStore((s) => s.reset);
+
+  const getSampleById = useCallback(
+    (id: string): Sample | undefined => samples.find((s) => s.id === id),
+    [samples]
+  );
+
+  const selectSample = useCompositionStore((s) => s.selectSample);
+
+  const masterPitch = useCompositionStore((s) => s.masterPitch);
+  const loadPeaks = useWaveformPeaksStore((s) => s.loadPeaks);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    for (const ps of composition.placedSamples) {
+      const sample = getSampleById(ps.sampleId);
+      if (sample) loadPeaks(sample.fileUrl);
+    }
+  }, [composition.placedSamples, getSampleById, loadPeaks]);
+
+  const { playbackState, currentTimeMs, totalElapsedMs, play, pause, stop, previewSample } =
+    useAudioEngine(getSampleById, masterPitch);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background text-text-muted">
+        Loading samples...
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex flex-col h-screen overflow-hidden bg-background p-2 md:p-3 gap-2 md:gap-3" onClick={() => selectSample(null)}>
+      {/* Header */}
+      <header
+        className="flex items-center justify-between px-4 py-2.5 bg-surface rounded-[var(--radius)] shrink-0"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-3">
+          {/* Mobile sidebar toggle */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="md:hidden w-8 h-8 rounded-[var(--radius-sm)] bg-surface-alt flex items-center justify-center text-text-muted hover:text-text transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <rect x="2" y="3" width="12" height="1.5" rx="0.75" />
+              <rect x="2" y="7.25" width="12" height="1.5" rx="0.75" />
+              <rect x="2" y="11.5" width="12" height="1.5" rx="0.75" />
+            </svg>
+          </button>
+          <h1
+            className="text-base md:text-lg font-bold bg-clip-text text-transparent"
+            style={{
+              backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
+            }}
+          >
+            Skip Proof Generator
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+          <span className="hidden sm:inline text-xs text-text-muted font-mono">
+            {composition.remainingMs.toFixed(0)}ms free
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="flex items-center gap-2">
+          <button
+            onClick={reset}
+            className="text-xs px-3 py-1.5 rounded-[var(--radius-sm)] bg-surface-alt text-text-muted hover:text-text transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            Clear
+          </button>
+          <ExportButton samples={samples} />
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div className="flex flex-1 min-h-0 gap-2 md:gap-3">
+        {/* Sidebar - Sample Library */}
+        {/* Mobile overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        <div
+          className={`
+            fixed inset-y-0 left-0 z-50 w-[280px] transition-transform duration-300 md:transition-none
+            md:static md:z-auto md:w-[260px] lg:w-[280px] shrink-0
+            ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          `}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <SampleLibrary samples={samples} previewSample={previewSample} onClose={() => setSidebarOpen(false)} />
+        </div>
+
+        {/* Right side - Waveform + Vinyl */}
+        <div className="flex-1 flex flex-col min-h-0 gap-2 md:gap-3">
+          {/* Waveform panel */}
+          <div
+            className="shrink-0 bg-surface rounded-[var(--radius)] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <WaveformToolbar
+              playbackState={playbackState}
+              onPlay={() => play(composition.placedSamples)}
+              onPause={pause}
+              onStop={stop}
+              disabled={composition.placedSamples.length === 0}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <Waveform
+              samples={samples}
+              playbackState={playbackState}
+              currentTimeMs={currentTimeMs}
+            />
+          </div>
+
+          {/* Vinyl panel */}
+          <div className="flex-1 flex flex-col items-center justify-center relative bg-surface rounded-[var(--radius)] p-4 min-h-0 overflow-hidden">
+            <div onClick={(e) => e.stopPropagation()}><PitchControl samples={samples} /></div>
+            <VinylDisk
+              samples={samples}
+              playbackState={playbackState}
+              currentTimeMs={currentTimeMs}
+              totalElapsedMs={totalElapsedMs}
+            />
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
