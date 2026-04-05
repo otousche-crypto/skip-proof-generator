@@ -9,7 +9,6 @@ import { SampleLibrary } from "@/components/SampleLibrary";
 import { VinylDisk } from "@/components/VinylDisk";
 import { Waveform } from "@/components/Waveform";
 import { WaveformToolbar } from "@/components/WaveformToolbar";
-import { PitchControl } from "@/components/PitchControl";
 import { ExportButton } from "@/components/ExportButton";
 import type { Sample } from "@/types";
 
@@ -24,6 +23,7 @@ export default function Home() {
   );
 
   const selectSample = useCompositionStore((s) => s.selectSample);
+  const selectedId = useCompositionStore((s) => s.selectedPlacedSampleId);
 
   const masterPitch = useCompositionStore((s) => s.masterPitch);
   const loadPeaks = useWaveformPeaksStore((s) => s.loadPeaks);
@@ -49,7 +49,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background p-2 md:p-3 gap-2 md:gap-3" onClick={() => selectSample(null)}>
+    <div className="flex flex-col h-dvh overflow-hidden bg-background p-2 md:p-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-3 gap-2 md:gap-3" onClick={() => selectSample(null)}>
       {/* Header */}
       <header
         className="flex items-center justify-between px-4 py-2.5 bg-surface rounded-[var(--radius)] shrink-0"
@@ -139,37 +139,55 @@ export default function Home() {
                 totalElapsedMs={totalElapsedMs}
               />
             </div>
-            {/* Master Pitch — horizontal bar below vinyl */}
+            {/* Bottom bar: Delete when selected, Pitch otherwise */}
             <div
-              className="flex items-center gap-3 shrink-0 py-1"
+              className="flex items-center justify-center gap-3 shrink-0 py-1 h-8"
               onClick={(e) => e.stopPropagation()}
             >
-              <span className="text-[10px] text-text-muted font-mono">Pitch</span>
-              <input
-                type="range"
-                min={-50}
-                max={50}
-                value={Math.round((masterPitch - 1) * 100)}
-                onChange={(e) => {
-                  const raw = Number(e.target.value);
-                  const snapped = Math.abs(raw) <= 3 ? 0 : raw;
-                  useCompositionStore.getState().setMasterPitch(1 + snapped / 100);
-                }}
-                className="w-32 md:w-40 h-1 accent-accent-orange cursor-pointer"
-                title={`Master pitch: ${masterPitch >= 1 ? "+" : ""}${Math.round((masterPitch - 1) * 100)}%`}
-              />
-              <button
-                onClick={() => useCompositionStore.getState().setMasterPitch(1)}
-                className={`text-[10px] font-mono tabular-nums ${
-                  masterPitch === 1 ? "text-text-muted" : "text-accent-orange cursor-pointer hover:underline"
-                }`}
-                title="Reset pitch to 0%"
-              >
-                {masterPitch >= 1 ? "+" : "−"}{String(Math.abs(Math.round((masterPitch - 1) * 100))).padStart(2, "\u2007")}%
-              </button>
-            </div>
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 md:bottom-auto md:left-auto md:translate-x-0 md:right-4 md:top-1/2 md:-translate-y-1/2 z-10" onClick={(e) => e.stopPropagation()}>
-              <PitchControl samples={samples} />
+              {selectedId && composition.placedSamples.find((s) => s.id === selectedId) ? (
+                <button
+                  onClick={() => {
+                    useCompositionStore.getState().removeSample(selectedId);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-red-900/30 text-red-400 hover:bg-red-900/50 transition-colors"
+                  title="Supprimer le sample"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="1.5,3 10.5,3" />
+                    <path d="M4.5,3 V1.5 H7.5 V3" />
+                    <path d="M2.5,3 V10.5 H9.5 V3" />
+                    <line x1="5" y1="5.5" x2="5" y2="8.5" />
+                    <line x1="7" y1="5.5" x2="7" y2="8.5" />
+                  </svg>
+                  Delete
+                </button>
+              ) : (
+                <>
+                  <span className="text-[10px] text-text-muted font-mono">Pitch</span>
+                  <input
+                    type="range"
+                    min={-50}
+                    max={50}
+                    value={Math.round((masterPitch - 1) * 100)}
+                    onChange={(e) => {
+                      const raw = Number(e.target.value);
+                      const snapped = Math.abs(raw) <= 3 ? 0 : raw;
+                      useCompositionStore.getState().setMasterPitch(1 + snapped / 100);
+                    }}
+                    className="w-32 md:w-40 h-1 accent-accent-orange cursor-pointer"
+                    title={`Master pitch: ${masterPitch >= 1 ? "+" : ""}${Math.round((masterPitch - 1) * 100)}%`}
+                  />
+                  <button
+                    onClick={() => useCompositionStore.getState().setMasterPitch(1)}
+                    className={`text-[10px] font-mono tabular-nums ${
+                      masterPitch === 1 ? "text-text-muted" : "text-accent-orange cursor-pointer hover:underline"
+                    }`}
+                    title="Reset pitch to 0%"
+                  >
+                    {masterPitch >= 1 ? "+" : "−"}{String(Math.abs(Math.round((masterPitch - 1) * 100))).padStart(2, "\u2007")}%
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
