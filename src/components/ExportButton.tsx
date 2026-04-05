@@ -163,7 +163,7 @@ function ExportModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
     >
       <div
-        className="bg-surface rounded-[var(--radius)] w-full max-w-md mx-4 shadow-2xl"
+        className="bg-surface rounded-[var(--radius)] w-full max-w-md mx-3 md:mx-4 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

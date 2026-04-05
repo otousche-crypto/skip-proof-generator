@@ -18,7 +18,7 @@ export function PitchControl({ samples }: { samples: Sample[] }) {
   const sampleInfo = samples.find((s) => s.id === placed.sampleId);
 
   return (
-    <div className="absolute top-4 right-4 bg-surface-alt rounded-[var(--radius)] p-4 w-64 z-10 shadow-xl">
+    <div className="bg-surface-alt rounded-[var(--radius)] p-3 md:p-4 w-[calc(100vw-2rem)] max-w-64 shadow-xl">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {sampleInfo && (

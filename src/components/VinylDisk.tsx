@@ -7,12 +7,12 @@ import type { Sample } from "@/types";
 import type { PlaybackState } from "@/hooks/useAudioEngine";
 
 const TOTAL_MS = 1800; // 33⅓ RPM: 60000ms / 33.333 = 1800ms per revolution
-const CENTER = 150;
-const RADIUS = 130;
-const INNER_RADIUS = 30;
+const CENTER = 300;
+const RADIUS = 260;
+const INNER_RADIUS = 60;
 const MID_RADIUS = (RADIUS + INNER_RADIUS) / 2;
-const WAVE_MAX_AMP = (RADIUS - INNER_RADIUS) / 2 - 4;
-const HANDLE_RADIUS = 6;
+const WAVE_MAX_AMP = (RADIUS - INNER_RADIUS) / 2 - 8;
+const HANDLE_RADIUS = 12;
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const rad = ((angleDeg - 90) * Math.PI) / 180;
@@ -52,7 +52,7 @@ function waveformLines(
   for (let i = 0; i < steps; i++) {
     const t = i / steps;
     const angle = startAngle + t * span;
-    const peakIdx = Math.min(Math.floor(t * peaks.length), peaks.length - 1);
+    const peakIdx = Math.min(Math.floor((1 - t) * peaks.length), peaks.length - 1);
     const amp = peaks[peakIdx] * WAVE_MAX_AMP;
 
     const rInner = MID_RADIUS - amp;
@@ -188,11 +188,17 @@ export function VinylDisk({
   }, []);
 
   return (
-    <div className="flex items-center justify-center flex-1 min-h-0">
-      <div className="relative h-full max-h-[800px] aspect-square" style={{ transform: "rotate(22deg)" }}>
+    <div className="flex items-center justify-center flex-1 min-h-0 min-w-0 overflow-hidden w-full">
+      <div
+        className="relative aspect-square shrink-0"
+        style={{
+          width: "min(calc(100vh - 14rem), calc(100vw - 6rem))",
+          transform: "rotate(22deg)",
+        }}
+      >
       <svg
         ref={svgRef}
-        viewBox="0 0 300 300"
+        viewBox="0 0 600 600"
         className="w-full h-full"
         style={{
           transform: `rotate(${rotationDeg}deg)`,
@@ -242,7 +248,7 @@ export function VinylDisk({
                 d={arcPath(startAngle, endAngle, RADIUS, INNER_RADIUS)}
                 fill={sample.color}
                 stroke={isSelected ? "#7C3AED" : "#0a0a0a"}
-                strokeWidth={isSelected ? 2 : 0.5}
+                strokeWidth={isSelected ? 4 : 1}
                 className="cursor-pointer"
                 onClick={(e) => { e.stopPropagation(); selectSample(ps.id); }}
                 style={
@@ -257,7 +263,7 @@ export function VinylDisk({
                 d={waveformLines(startAngle, endAngle, peaks)}
                 fill="none"
                 stroke="rgba(0,0,0,0.35)"
-                strokeWidth={1.5}
+                strokeWidth={3}
                 strokeLinecap="round"
                 clipPath={`url(#clip-${ps.id})`}
                 className="pointer-events-none"
@@ -289,14 +295,14 @@ export function VinylDisk({
         <circle
           cx={CENTER}
           cy={CENTER}
-          r={INNER_RADIUS - 2}
+          r={INNER_RADIUS - 4}
           fill="none"
           stroke="#2a2a2a"
-          strokeWidth={1}
+          strokeWidth={2}
         />
 
         {/* Grooves */}
-        {[50, 70, 90, 110].map((r) => (
+        {[100, 140, 180, 220].map((r) => (
           <circle
             key={r}
             cx={CENTER}
@@ -304,7 +310,7 @@ export function VinylDisk({
             r={r}
             fill="none"
             stroke="#ffffff08"
-            strokeWidth={0.5}
+            strokeWidth={1}
           />
         ))}
 
@@ -318,8 +324,8 @@ export function VinylDisk({
             const ms = i * halfBeatMs;
             const angle = msToDiscAngle(ms);
             const isBeat = i % 2 === 0;
-            const outerR = isBeat ? RADIUS + 4 : RADIUS - 1;
-            const innerR = isBeat ? INNER_RADIUS - 3 : INNER_RADIUS + 1;
+            const outerR = isBeat ? RADIUS + 8 : RADIUS - 2;
+            const innerR = isBeat ? INNER_RADIUS - 6 : INNER_RADIUS + 2;
             const outer = polarToCartesian(CENTER, CENTER, outerR, angle);
             const inner = polarToCartesian(CENTER, CENTER, innerR, angle);
             lines.push(
@@ -330,7 +336,7 @@ export function VinylDisk({
                 x2={outer.x}
                 y2={outer.y}
                 stroke={isBeat ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.15)"}
-                strokeWidth={isBeat ? 1 : 0.5}
+                strokeWidth={isBeat ? 2 : 1}
                 className="pointer-events-none"
               />
             );
@@ -357,10 +363,10 @@ export function VinylDisk({
               <circle
                 cx={startHandlePos.x}
                 cy={startHandlePos.y}
-                r={hoveredHandle === startHandleId ? HANDLE_RADIUS + 1 : HANDLE_RADIUS}
+                r={hoveredHandle === startHandleId ? HANDLE_RADIUS + 2 : HANDLE_RADIUS}
                 fill="#ffffff"
                 stroke="#0a0a0a"
-                strokeWidth={0.75}
+                strokeWidth={1.5}
                 className="cursor-grab active:cursor-grabbing"
                 onPointerDown={(e) => {
                   const offsetAngle = pointerToAngle(e.nativeEvent, svgRef.current!, rotationDeg);
@@ -375,22 +381,22 @@ export function VinylDisk({
                 transform={`translate(${startHandlePos.x}, ${startHandlePos.y})`}
                 className="pointer-events-none"
               >
-                <line x1="-3.5" y1="0" x2="3.5" y2="0" stroke="#0a0a0a" strokeWidth={0.7} strokeLinecap="round" />
-                <line x1="0" y1="-3.5" x2="0" y2="3.5" stroke="#0a0a0a" strokeWidth={0.7} strokeLinecap="round" />
-                <polyline points="-2,1.5 -3.5,0 -2,-1.5" fill="none" stroke="#0a0a0a" strokeWidth={0.7} strokeLinecap="round" strokeLinejoin="round" />
-                <polyline points="2,1.5 3.5,0 2,-1.5" fill="none" stroke="#0a0a0a" strokeWidth={0.7} strokeLinecap="round" strokeLinejoin="round" />
-                <polyline points="-1.5,-2 0,-3.5 1.5,-2" fill="none" stroke="#0a0a0a" strokeWidth={0.7} strokeLinecap="round" strokeLinejoin="round" />
-                <polyline points="-1.5,2 0,3.5 1.5,2" fill="none" stroke="#0a0a0a" strokeWidth={0.7} strokeLinecap="round" strokeLinejoin="round" />
+                <line x1="-7" y1="0" x2="7" y2="0" stroke="#0a0a0a" strokeWidth={1.4} strokeLinecap="round" />
+                <line x1="0" y1="-7" x2="0" y2="7" stroke="#0a0a0a" strokeWidth={1.4} strokeLinecap="round" />
+                <polyline points="-4,3 -7,0 -4,-3" fill="none" stroke="#0a0a0a" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points="4,3 7,0 4,-3" fill="none" stroke="#0a0a0a" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points="-3,-4 0,-7 3,-4" fill="none" stroke="#0a0a0a" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points="-3,4 0,7 3,4" fill="none" stroke="#0a0a0a" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
               </g>
 
               {/* End handle — resize / pitch */}
               <circle
                 cx={endHandlePos.x}
                 cy={endHandlePos.y}
-                r={hoveredHandle === endHandleId ? HANDLE_RADIUS + 1 : HANDLE_RADIUS}
+                r={hoveredHandle === endHandleId ? HANDLE_RADIUS + 2 : HANDLE_RADIUS}
                 fill={sample.color}
                 stroke="#ffffff"
-                strokeWidth={0.75}
+                strokeWidth={1.5}
                 className="cursor-ew-resize"
                 onPointerDown={(e) => {
                   handlePointerDown(e, { type: "resize", sampleId: ps.id });
@@ -400,11 +406,11 @@ export function VinylDisk({
               />
               <text
                 x={endHandlePos.x}
-                y={endHandlePos.y + 0.5}
+                y={endHandlePos.y + 1}
                 textAnchor="middle"
                 dominantBaseline="central"
                 fill="#ffffff"
-                fontSize="8"
+                fontSize="16"
                 fontWeight="bold"
                 fontFamily="Inter, sans-serif"
                 className="pointer-events-none"

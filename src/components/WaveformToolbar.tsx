@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useCompositionStore } from "@/store/composition";
 import type { PlaybackState } from "@/hooks/useAudioEngine";
 
@@ -10,12 +10,14 @@ export function WaveformToolbar({
   onPause,
   onStop,
   disabled,
+  actions,
 }: {
   playbackState: PlaybackState;
   onPlay: () => void;
   onPause: () => void;
   onStop: () => void;
   disabled: boolean;
+  actions?: ReactNode;
 }) {
   const loopMode = useCompositionStore((s) => s.loopMode);
   const setLoopMode = useCompositionStore((s) => s.setLoopMode);
@@ -23,8 +25,6 @@ export function WaveformToolbar({
   const snapEnabled = useCompositionStore((s) => s.snapEnabled);
   const toggleSnap = useCompositionStore((s) => s.toggleSnap);
 
-  const masterPitch = useCompositionStore((s) => s.masterPitch);
-  const setMasterPitch = useCompositionStore((s) => s.setMasterPitch);
 
   const [metronomeOn, setMetronomeOn] = useState(false);
   const metroCtxRef = useRef<AudioContext | null>(null);
@@ -83,7 +83,7 @@ export function WaveformToolbar({
 
   return (
     <div
-      className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 border-b border-border"
+      className="flex flex-wrap items-center justify-between gap-1.5 md:gap-2 px-2 md:px-3 py-1.5 md:py-2 border-b border-border"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Left — Loop mode + controls */}
@@ -152,32 +152,12 @@ export function WaveformToolbar({
         </button>
       </div>
 
-      {/* Right — Master Pitch */}
-      <div className="flex items-center justify-end gap-1.5">
-        <span className="text-xs text-text-muted font-mono">Pitch</span>
-        <input
-          type="range"
-          min={-50}
-          max={50}
-          value={Math.round((masterPitch - 1) * 100)}
-          onChange={(e) => {
-            const raw = Number(e.target.value);
-            const snapped = Math.abs(raw) <= 3 ? 0 : raw;
-            setMasterPitch(1 + snapped / 100);
-          }}
-          className="w-16 md:w-20 h-1 accent-accent-orange cursor-pointer"
-          title={`Master pitch: ${masterPitch >= 1 ? "+" : ""}${Math.round((masterPitch - 1) * 100)}%`}
-        />
-        <button
-          onClick={() => setMasterPitch(1)}
-          className={`min-w-[3.5ch] text-[10px] font-mono tabular-nums text-center ${
-            masterPitch === 1 ? "text-text-muted" : "text-accent-orange cursor-pointer hover:underline"
-          }`}
-          title="Reset pitch to 0%"
-        >
-          {masterPitch >= 1 ? "+" : "\u2212"}{String(Math.abs(Math.round((masterPitch - 1) * 100))).padStart(2, "\u2007")}%
-        </button>
-      </div>
+      {/* Right — Actions */}
+      {actions && (
+        <div className="flex items-center justify-end gap-1.5">
+          {actions}
+        </div>
+      )}
     </div>
   );
 }

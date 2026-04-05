@@ -212,12 +212,14 @@ export function Waveform({
     // Playback cursor
     if (playbackState !== "stopped") {
       const cursorX = (currentTimeMs / TOTAL_MS) * w;
-      ctx.strokeStyle = "#ffffff";
+      ctx.strokeStyle = "#f97316";
       ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.9;
       ctx.beginPath();
       ctx.moveTo(cursorX, 0);
       ctx.lineTo(cursorX, h);
       ctx.stroke();
+      ctx.globalAlpha = 1;
     }
   }, [composition, selectedId, playbackState, currentTimeMs, sampleMap, bpm, peaksMap]);
 
@@ -335,12 +337,14 @@ export function Waveform({
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-20"
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-    />
+    <div className="mx-4 rounded-lg overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-14 md:h-20"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      />
+    </div>
   );
 }

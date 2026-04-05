@@ -79,15 +79,6 @@ export default function Home() {
             {composition.remainingMs.toFixed(0)}ms free
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={reset}
-            className="text-xs px-3 py-1.5 rounded-[var(--radius-sm)] bg-surface-alt text-text-muted hover:text-text transition-colors"
-          >
-            Clear
-          </button>
-          <ExportButton samples={samples} />
-        </div>
       </header>
 
       {/* Main content */}
@@ -111,19 +102,26 @@ export default function Home() {
           <SampleLibrary samples={samples} previewSample={previewSample} onClose={() => setSidebarOpen(false)} />
         </div>
 
-        {/* Right side - Waveform + Vinyl */}
-        <div className="flex-1 flex flex-col min-h-0 gap-2 md:gap-3">
-          {/* Waveform panel */}
-          <div
-            className="shrink-0 bg-surface rounded-[var(--radius)] overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
+        {/* Right side - Waveform + Vinyl (single panel) */}
+        <div className="flex-1 flex flex-col min-h-0 bg-surface rounded-[var(--radius)] overflow-hidden">
+          <div onClick={(e) => e.stopPropagation()}>
             <WaveformToolbar
               playbackState={playbackState}
               onPlay={() => play(composition.placedSamples)}
               onPause={pause}
               onStop={stop}
               disabled={composition.placedSamples.length === 0}
+              actions={
+                <>
+                  <button
+                    onClick={reset}
+                    className="px-2.5 h-6 rounded-lg text-[10px] font-mono bg-surface-alt text-text-muted hover:text-text transition-colors"
+                  >
+                    Clear
+                  </button>
+                  <ExportButton samples={samples} />
+                </>
+              }
             />
             <Waveform
               samples={samples}
@@ -132,15 +130,47 @@ export default function Home() {
             />
           </div>
 
-          {/* Vinyl panel */}
-          <div className="flex-1 flex flex-col items-center justify-center relative bg-surface rounded-[var(--radius)] p-4 min-h-0 overflow-hidden">
-            <div onClick={(e) => e.stopPropagation()}><PitchControl samples={samples} /></div>
-            <VinylDisk
-              samples={samples}
-              playbackState={playbackState}
-              currentTimeMs={currentTimeMs}
-              totalElapsedMs={totalElapsedMs}
-            />
+          <div className="flex-1 flex flex-col items-center justify-center relative p-2 md:p-4 min-h-0 min-w-0 overflow-hidden">
+            <div className="flex-1 flex items-center justify-center min-h-0 min-w-0 w-full">
+              <VinylDisk
+                samples={samples}
+                playbackState={playbackState}
+                currentTimeMs={currentTimeMs}
+                totalElapsedMs={totalElapsedMs}
+              />
+            </div>
+            {/* Master Pitch — horizontal bar below vinyl */}
+            <div
+              className="flex items-center gap-3 shrink-0 py-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-[10px] text-text-muted font-mono">Pitch</span>
+              <input
+                type="range"
+                min={-50}
+                max={50}
+                value={Math.round((masterPitch - 1) * 100)}
+                onChange={(e) => {
+                  const raw = Number(e.target.value);
+                  const snapped = Math.abs(raw) <= 3 ? 0 : raw;
+                  useCompositionStore.getState().setMasterPitch(1 + snapped / 100);
+                }}
+                className="w-32 md:w-40 h-1 accent-accent-orange cursor-pointer"
+                title={`Master pitch: ${masterPitch >= 1 ? "+" : ""}${Math.round((masterPitch - 1) * 100)}%`}
+              />
+              <button
+                onClick={() => useCompositionStore.getState().setMasterPitch(1)}
+                className={`text-[10px] font-mono tabular-nums ${
+                  masterPitch === 1 ? "text-text-muted" : "text-accent-orange cursor-pointer hover:underline"
+                }`}
+                title="Reset pitch to 0%"
+              >
+                {masterPitch >= 1 ? "+" : "−"}{String(Math.abs(Math.round((masterPitch - 1) * 100))).padStart(2, "\u2007")}%
+              </button>
+            </div>
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 md:bottom-auto md:left-auto md:translate-x-0 md:right-4 md:top-1/2 md:-translate-y-1/2 z-10" onClick={(e) => e.stopPropagation()}>
+              <PitchControl samples={samples} />
+            </div>
           </div>
         </div>
       </div>
