@@ -83,32 +83,25 @@ export function WaveformToolbar({
 
   return (
     <div
-      className="flex flex-wrap items-center justify-between gap-1.5 md:gap-2 px-2 md:px-3 py-1.5 md:py-2 border-b border-border"
+      className="flex flex-col gap-2 px-2 md:px-3 py-1.5 md:py-2 border-b border-border"
       onClick={(e) => e.stopPropagation()}
     >
-      {/* Left — Loop mode + controls */}
-      <div className="flex items-center gap-1 flex-wrap">
-        <span className="text-xs text-text-muted font-mono mr-0.5">BPM:</span>
-        {options.map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => setLoopMode(opt.value)}
-            className={pillClass(loopMode === opt.value)}
+      {/* Row 1 — BPM (left) + Magnet (right) */}
+      <div className="flex items-center justify-between md:hidden">
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] text-text-muted font-mono">BPM:</span>
+          <select
+            value={loopMode}
+            onChange={(e) => setLoopMode(e.target.value as "2bars" | "3bars" | "4bars")}
+            className="h-6 rounded-lg text-[10px] font-mono bg-accent-violet text-white border-none px-1.5 outline-none cursor-pointer"
           >
-            {opt.label}
-          </button>
-        ))}
-        <div className="w-px h-4 bg-border mx-1" />
-        <button
-          onClick={() => setMetronomeOn((v) => !v)}
-          className={pillClass(metronomeOn)}
-          title="Métronome"
-        >
-          <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="inline mr-0.5 -mt-px">
-            <path d="M6 0h4l2 14H4L6 0zM7 2L5.5 13h5L9 2H7zM7.5 4h1v5h-1V4zM3 14h10v2H3v-2z"/>
-          </svg>
-          <span className="hidden sm:inline">Metro</span>
-        </button>
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <button
           onClick={toggleSnap}
           className={pillClass(snapEnabled)}
@@ -117,47 +110,91 @@ export function WaveformToolbar({
           <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="inline mr-0.5 -mt-px">
             <path d="M8 0C5.8 0 4 1.8 4 4v5a4 4 0 0 0 8 0V4c0-2.2-1.8-4-4-4zM6 4c0-1.1.9-2 2-2s2 .9 2 2v5a2 2 0 1 1-4 0V4zM1 7h2v2a5 5 0 0 0 10 0V7h2v2a7 7 0 0 1-14 0V7z"/>
           </svg>
-          Snap
+          Magnet
         </button>
       </div>
 
-      {/* Center — Transport */}
-      <div className="flex items-center justify-center gap-1.5">
-        <button
-          onClick={onStop}
-          disabled={playbackState === "stopped"}
-          className="w-8 h-8 rounded-full bg-surface-alt flex items-center justify-center transition-colors hover:bg-border disabled:opacity-30"
-          title="Stop"
-        >
-          <svg width="10" height="10" viewBox="0 0 16 16" fill="white">
-            <rect x="3" y="3" width="10" height="10" rx="1" />
-          </svg>
-        </button>
-        <button
-          onClick={playbackState === "playing" ? onPause : onPlay}
-          disabled={playbackState !== "playing" && disabled}
-          className="w-9 h-9 rounded-full bg-accent-orange flex items-center justify-center transition-colors hover:brightness-110 disabled:opacity-30"
-          title={playbackState === "playing" ? "Pause" : "Play"}
-        >
-          {playbackState === "playing" ? (
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="white">
-              <rect x="3" y="2" width="3.5" height="12" rx="1" />
-              <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+      <div className="h-px bg-border/50 md:hidden" />
+      {/* Row 2 mobile / Single row desktop — Transport + Actions */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 md:gap-2">
+        {/* Left — BPM + Magnet (desktop only) */}
+        <div className="hidden md:flex items-center gap-1">
+          <span className="text-[10px] text-text-muted font-mono">BPM:</span>
+          <select
+            value={loopMode}
+            onChange={(e) => setLoopMode(e.target.value as "2bars" | "3bars" | "4bars")}
+            className="h-6 rounded-lg text-[10px] font-mono bg-accent-violet text-white border-none px-1.5 outline-none cursor-pointer"
+          >
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <div className="w-px h-4 bg-border mx-1" />
+          <button
+            onClick={toggleSnap}
+            className={pillClass(snapEnabled)}
+            title="Snap magnétique"
+          >
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="inline mr-0.5 -mt-px">
+              <path d="M8 0C5.8 0 4 1.8 4 4v5a4 4 0 0 0 8 0V4c0-2.2-1.8-4-4-4zM6 4c0-1.1.9-2 2-2s2 .9 2 2v5a2 2 0 1 1-4 0V4zM1 7h2v2a5 5 0 0 0 10 0V7h2v2a7 7 0 0 1-14 0V7z"/>
             </svg>
-          ) : (
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="white">
-              <polygon points="4,2 14,8 4,14" />
-            </svg>
-          )}
-        </button>
-      </div>
+            Magnet
+          </button>
+        </div>
+        {/* Left spacer (mobile only) */}
+        <div className="md:hidden" />
 
-      {/* Right — Actions */}
-      {actions && (
+        {/* Center — Transport */}
+        <div className="flex items-center justify-center gap-1.5">
+          <button
+            onClick={onStop}
+            disabled={playbackState === "stopped"}
+            className="w-8 h-8 rounded-full bg-surface-alt flex items-center justify-center transition-colors hover:bg-border disabled:opacity-30"
+            title="Stop"
+          >
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="white">
+              <rect x="3" y="3" width="10" height="10" rx="1" />
+            </svg>
+          </button>
+          <button
+            onClick={playbackState === "playing" ? onPause : onPlay}
+            disabled={playbackState !== "playing" && disabled}
+            className="w-9 h-9 rounded-full bg-accent-orange flex items-center justify-center transition-colors hover:brightness-110 disabled:opacity-30"
+            title={playbackState === "playing" ? "Pause" : "Play"}
+          >
+            {playbackState === "playing" ? (
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="white">
+                <rect x="3" y="2" width="3.5" height="12" rx="1" />
+                <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="white">
+                <polygon points="4,2 14,8 4,14" />
+              </svg>
+            )}
+          </button>
+          <button
+            onClick={() => setMetronomeOn((v) => !v)}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+              metronomeOn
+                ? "bg-accent-violet text-white"
+                : "bg-surface-alt text-text-muted hover:bg-border"
+            }`}
+            title="Métronome"
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M6 0h4l2 14H4L6 0zM7 2L5.5 13h5L9 2H7zM7.5 4h1v5h-1V4zM3 14h10v2H3v-2z"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Right — Actions */}
         <div className="flex items-center justify-end gap-1.5">
           {actions}
         </div>
-      )}
+      </div>
     </div>
   );
 }

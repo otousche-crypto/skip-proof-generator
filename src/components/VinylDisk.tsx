@@ -175,7 +175,7 @@ export function VinylDisk({
         const originalDuration = _sampleDurations.get(ps.sampleId) ?? ps.durationMs;
         const newPitch = originalDuration / newDurationMs;
         // Clamp pitch to reasonable range
-        if (newPitch < 0.5 || newPitch > 1.5) return;
+        if (newPitch < 0.2 || newPitch > 5) return;
 
         resizeSample(drag.sampleId, newDurationMs);
       }
@@ -192,7 +192,7 @@ export function VinylDisk({
       <div
         className="relative aspect-square shrink-0"
         style={{
-          width: "min(calc(100vh - 14rem), calc(100vw - 6rem))",
+          width: "min(calc(100vh - 16rem), calc(100vw - 6rem))",
           transform: "rotate(22deg)",
         }}
       >

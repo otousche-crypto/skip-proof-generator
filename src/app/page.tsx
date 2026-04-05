@@ -52,33 +52,28 @@ export default function Home() {
     <div className="flex flex-col h-dvh overflow-hidden bg-background p-2 md:p-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-3 gap-2 md:gap-3" onClick={() => selectSample(null)}>
       {/* Header */}
       <header
-        className="flex items-center justify-between px-4 py-2.5 bg-surface rounded-[var(--radius)] shrink-0"
+        className="flex items-center justify-center shrink-0 py-1"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3">
-          {/* Mobile sidebar toggle */}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden w-8 h-8 rounded-[var(--radius-sm)] bg-surface-alt flex items-center justify-center text-text-muted hover:text-text transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <rect x="2" y="3" width="12" height="1.5" rx="0.75" />
-              <rect x="2" y="7.25" width="12" height="1.5" rx="0.75" />
-              <rect x="2" y="11.5" width="12" height="1.5" rx="0.75" />
-            </svg>
-          </button>
-          <h1
-            className="text-base md:text-lg font-bold bg-clip-text text-transparent"
-            style={{
-              backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
-            }}
-          >
-            Skip Proof Generator
-          </h1>
-          <span className="hidden sm:inline text-xs text-text-muted font-mono">
-            {composition.remainingMs.toFixed(0)}ms free
-          </span>
-        </div>
+        {/* Mobile sidebar toggle */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="md:hidden absolute left-3 w-8 h-8 rounded-[var(--radius-sm)] bg-surface-alt flex items-center justify-center text-text-muted hover:text-text transition-colors"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <rect x="2" y="3" width="12" height="1.5" rx="0.75" />
+            <rect x="2" y="7.25" width="12" height="1.5" rx="0.75" />
+            <rect x="2" y="11.5" width="12" height="1.5" rx="0.75" />
+          </svg>
+        </button>
+        <h1
+          className="text-base md:text-lg font-bold bg-clip-text text-transparent"
+          style={{
+            backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
+          }}
+        >
+          Sklip
+        </h1>
       </header>
 
       {/* Main content */}
@@ -112,15 +107,7 @@ export default function Home() {
               onStop={stop}
               disabled={composition.placedSamples.length === 0}
               actions={
-                <>
-                  <button
-                    onClick={reset}
-                    className="px-2.5 h-6 rounded-lg text-[10px] font-mono bg-surface-alt text-text-muted hover:text-text transition-colors"
-                  >
-                    Clear
-                  </button>
-                  <ExportButton samples={samples} />
-                </>
+                <ExportButton samples={samples} />
               }
             />
             <Waveform
@@ -130,7 +117,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center relative p-2 md:p-4 min-h-0 min-w-0 overflow-hidden">
+          <div className="flex-1 flex flex-col items-center justify-center relative p-2 md:p-4 min-h-0 min-w-0">
             <div className="flex-1 flex items-center justify-center min-h-0 min-w-0 w-full">
               <VinylDisk
                 samples={samples}
@@ -174,7 +161,7 @@ export default function Home() {
                       const snapped = Math.abs(raw) <= 3 ? 0 : raw;
                       useCompositionStore.getState().setMasterPitch(1 + snapped / 100);
                     }}
-                    className="w-32 md:w-40 h-1 accent-accent-orange cursor-pointer"
+                    className="w-32 md:w-40 h-2 accent-accent-orange cursor-pointer py-2"
                     title={`Master pitch: ${masterPitch >= 1 ? "+" : ""}${Math.round((masterPitch - 1) * 100)}%`}
                   />
                   <button

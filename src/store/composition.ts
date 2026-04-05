@@ -127,7 +127,7 @@ export const useCompositionStore = create<CompositionStore>((set, get) => ({
   composition: initialComposition,
   selectedPlacedSampleId: null,
   bpm: 400 / 3, // 133⅓ BPM (default: 2 bars)
-  snapEnabled: false,
+  snapEnabled: true,
   loopMode: "2bars" as "2bars" | "3bars" | "4bars",
   masterPitch: 1,
   _sampleDurations: new Map(),

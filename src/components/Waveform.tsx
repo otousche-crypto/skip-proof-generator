@@ -308,7 +308,7 @@ export function Waveform({
 
           const originalDuration = _sampleDurations.get(ps.sampleId) ?? ps.durationMs;
           const newPitch = originalDuration / newDurationMs;
-          if (newPitch < 0.5 || newPitch > 1.5) return;
+          if (newPitch < 0.2 || newPitch > 5) return;
 
           resizeSample(drag.id, newDurationMs);
           canvas.style.cursor = "ew-resize";

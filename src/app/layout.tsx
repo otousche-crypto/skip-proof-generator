@@ -14,7 +14,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Skip Proof Generator",
+  title: "Sklip",
   description: "Compose skip-proof vinyl samples for DJ scratching",
 };
 
