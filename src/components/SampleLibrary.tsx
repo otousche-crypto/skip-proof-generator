@@ -68,13 +68,13 @@ export function SampleLibrary({
     [previewSample, previewingId, stopCurrentPreview]
   );
 
+  const compositionName = useCompositionStore((s) => s.compositionName);
+  const setCompositionName = useCompositionStore((s) => s.setCompositionName);
+
   return (
     <div className="flex flex-col h-full bg-surface md:rounded-[var(--radius)] overflow-hidden">
       <div className="px-4 py-3 space-y-2.5">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold tracking-wide uppercase text-text-muted">
-            Samples
-          </h2>
           {onClose && (
             <button
               onClick={onClose}
@@ -83,6 +83,19 @@ export function SampleLibrary({
               ✕
             </button>
           )}
+        </div>
+        {/* Project name */}
+        <input
+          type="text"
+          value={compositionName}
+          onChange={(e) => setCompositionName(e.target.value)}
+          className="w-full bg-transparent text-text font-bold text-sm border-b border-transparent hover:border-border focus:border-accent-orange focus:outline-none py-1 truncate"
+          placeholder="Nom du projet"
+        />
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold tracking-wide uppercase text-text-muted">
+            Samples
+          </h2>
         </div>
         <div className="relative">
           <input
@@ -133,8 +146,6 @@ export function SampleLibrary({
               {isOpen && (
                 <div className="space-y-0.5 mt-0.5">
                   {filtered.map((sample) => {
-                    const canAdd =
-                      composition.remainingMs >= sample.durationMs;
                     return (
                       <div
                         key={sample.id}
@@ -174,10 +185,8 @@ export function SampleLibrary({
                           )}
                         </button>
                         <div
-                          className={`flex-1 min-w-0 cursor-pointer ${
-                            !canAdd ? "opacity-40 cursor-not-allowed" : ""
-                          }`}
-                          onClick={() => canAdd && addSample(sample)}
+                          className="flex-1 min-w-0 cursor-pointer"
+                          onClick={() => addSample(sample)}
                         >
                           <div className="text-sm font-medium truncate">
                             {sample.name}
@@ -187,15 +196,10 @@ export function SampleLibrary({
                           </div>
                         </div>
                         <button
-                          className={`text-xs px-2 py-1 rounded-lg font-medium transition-colors ${
-                            canAdd
-                              ? "bg-accent-orange/20 text-accent-orange hover:bg-accent-orange/30"
-                              : "bg-surface-alt text-text-muted"
-                          }`}
-                          disabled={!canAdd}
+                          className="text-xs px-2 py-1 rounded-lg font-medium transition-colors bg-accent-orange/20 text-accent-orange hover:bg-accent-orange/30"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (canAdd) addSample(sample);
+                            addSample(sample);
                           }}
                         >
                           +

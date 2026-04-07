@@ -26,3 +26,19 @@ export type Composition = {
   usedMs: number;
   remainingMs: number;
 };
+
+export type SavedCompositionData = {
+  placedSamples: PlacedSample[];
+  bpm: number;
+  loopMode: "2bars" | "3bars" | "4bars";
+  masterPitch: number;
+};
+
+export type SavedComposition = {
+  id: string;
+  user_id: string;
+  name: string;
+  data: SavedCompositionData;
+  created_at: string;
+  updated_at: string;
+};

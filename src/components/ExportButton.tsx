@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useCompositionStore } from "@/store/composition";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthForm } from "@/components/AuthForm";
 import type { Sample } from "@/types";
 
 type ExportFormat = "mp3" | "wav";
@@ -356,16 +358,136 @@ function writeString(view: DataView, offset: number, str: string) {
   }
 }
 
+function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+  const backdropRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <div
+      ref={backdropRef}
+      onClick={(e) => { if (e.target === backdropRef.current) onClose(); }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+    >
+      <div onClick={(e) => e.stopPropagation()}>
+        <div className="relative">
+          <button
+            onClick={onClose}
+            className="absolute -top-2 -right-2 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-surface border border-border text-text-muted hover:text-foreground transition-colors text-lg leading-none"
+          >
+            ✕
+          </button>
+          <div className="mb-4 text-center text-sm text-text-muted">
+            Connecte-toi pour exporter ta composition
+          </div>
+          <AuthForm onSuccess={onSuccess} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OverflowModal({
+  overflowMs,
+  onClose,
+  onExportAnyway,
+}: {
+  overflowMs: number;
+  onClose: () => void;
+  onExportAnyway: () => void;
+}) {
+  const backdropRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <div
+      ref={backdropRef}
+      onClick={(e) => { if (e.target === backdropRef.current) onClose(); }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+    >
+      <div
+        className="bg-surface rounded-[var(--radius)] w-full max-w-sm mx-3 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-5 py-4 border-b border-border">
+          <h2
+            className="text-base font-bold bg-clip-text text-transparent"
+            style={{ backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)" }}
+          >
+            Composition trop longue
+          </h2>
+        </div>
+        <div className="px-5 py-4 space-y-3">
+          <p className="text-sm text-text">
+            Ta composition dépasse la durée d&apos;un tour de disque de{" "}
+            <span className="font-mono font-bold text-accent-orange">{Math.round(overflowMs)}ms</span>.
+          </p>
+          <p className="text-sm text-text-muted">
+            Ajuste la durée ou le pitch de tes samples pour que l&apos;ensemble tienne en 1818ms. Sinon, le dernier sample sera coupé à l&apos;export.
+          </p>
+        </div>
+        <div className="flex gap-3 px-5 py-4 border-t border-border">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold bg-surface-alt text-text hover:text-accent-orange transition-colors"
+          >
+            Ajuster
+          </button>
+          <button
+            onClick={onExportAnyway}
+            className="flex-1 px-4 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-text-muted bg-surface-alt hover:text-text transition-colors"
+          >
+            Exporter quand même
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ExportButton({ samples }: { samples: Sample[] }) {
   const composition = useCompositionStore((s) => s.composition);
-  const [showModal, setShowModal] = useState(false);
+  const { user } = useAuth();
+  const [showExport, setShowExport] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [showOverflow, setShowOverflow] = useState(false);
 
   const disabled = composition.placedSamples.length === 0;
+  const overflowMs = composition.usedMs - composition.totalDurationMs;
+
+  const proceedToExport = () => {
+    if (user) {
+      setShowExport(true);
+    } else {
+      setShowAuth(true);
+    }
+  };
+
+  const handleClick = () => {
+    if (overflowMs > 0) {
+      setShowOverflow(true);
+    } else {
+      proceedToExport();
+    }
+  };
 
   return (
     <>
       <button
-        onClick={() => setShowModal(true)}
+        onClick={handleClick}
         disabled={disabled}
         className="px-4 py-2 rounded-[var(--radius-sm)] text-sm font-bold transition-all disabled:opacity-30"
         style={{
@@ -376,8 +498,27 @@ export function ExportButton({ samples }: { samples: Sample[] }) {
       >
         Exporter
       </button>
-      {showModal && (
-        <ExportModal samples={samples} onClose={() => setShowModal(false)} />
+      {showOverflow && (
+        <OverflowModal
+          overflowMs={overflowMs}
+          onClose={() => setShowOverflow(false)}
+          onExportAnyway={() => {
+            setShowOverflow(false);
+            proceedToExport();
+          }}
+        />
+      )}
+      {showExport && (
+        <ExportModal samples={samples} onClose={() => setShowExport(false)} />
+      )}
+      {showAuth && (
+        <AuthModal
+          onClose={() => setShowAuth(false)}
+          onSuccess={() => {
+            setShowAuth(false);
+            setShowExport(true);
+          }}
+        />
       )}
     </>
   );

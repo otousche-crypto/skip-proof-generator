@@ -53,3 +53,74 @@ body {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* Landing — Section 2: Vinyl animation (9s cycle) */
+/* Phase1: 0-12% block1 pop | Phase2: 12-25% block2 pop | Phase3: 30-55% cursor drags resize | Phase4: 55-82% hold | Phase5: 82-100% out */
+
+@keyframes vinyl-pop1 {
+  0%, 5% { opacity: 0; }
+  8% { opacity: 1; }
+  82% { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes vinyl-pop2 {
+  0%, 16% { opacity: 0; }
+  20% { opacity: 1; }
+  82% { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes vinyl-block2-extend {
+  0%, 38% { opacity: 0; }
+  50% { opacity: 1; }
+  82% { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+/* Resize handle + cursor: both rotate around vinyl center */
+@keyframes vinyl-resize-handle {
+  0%, 25% { opacity: 0; }
+  28% { opacity: 1; }
+  38% { opacity: 1; }
+  50% { opacity: 1; }
+  82% { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes vinyl-drag-rotate {
+  0%, 38% { transform: rotate(0deg); }
+  50% { transform: rotate(30deg); }
+  82% { transform: rotate(30deg); }
+  92%, 100% { transform: rotate(0deg); }
+}
+
+/* Cursor pointer: fades in near handle, follows rotation, fades out after */
+@keyframes vinyl-cursor-fade {
+  0%, 30% { opacity: 0; }
+  34% { opacity: 1; }
+  54% { opacity: 1; }
+  58% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* Landing — Section 3: Library animation */
+@keyframes lib-category-open {
+  0%, 10% { max-height: 0; opacity: 0; }
+  18% { max-height: 280px; opacity: 1; }
+  85% { max-height: 280px; opacity: 1; }
+  95%, 100% { max-height: 0; opacity: 0; }
+}
+
+@keyframes lib-arrow-rotate {
+  0%, 10% { transform: rotate(0deg); }
+  18% { transform: rotate(90deg); }
+  85% { transform: rotate(90deg); }
+  95%, 100% { transform: rotate(0deg); }
+}
+
+@keyframes lib-scroll {
+  0%, 22% { transform: translateY(0); }
+  70% { transform: translateY(-180px); }
+  85%, 100% { transform: translateY(0); }
+}

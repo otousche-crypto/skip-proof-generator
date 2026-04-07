@@ -1,7 +1,9 @@
 import { create } from "zustand";
-import type { Composition, PlacedSample, Sample } from "@/types";
+import type { Composition, PlacedSample, Sample, SavedCompositionData } from "@/types";
 
 const TOTAL_DURATION_MS = 1818;
+
+let compositionCounter = 1;
 
 /**
  * Magnetic snap: if `ms` is within a threshold of a grid line (beat or half-beat),
@@ -103,6 +105,8 @@ interface CompositionStore {
   snapEnabled: boolean;
   loopMode: "2bars" | "3bars" | "4bars";
   masterPitch: number;
+  currentCompositionId: string | null;
+  compositionName: string;
   setMasterPitch: (pitch: number) => void;
   toggleSnap: () => void;
   addSample: (sample: Sample) => void;
@@ -112,6 +116,9 @@ interface CompositionStore {
   resizeSample: (id: string, newDurationMs: number) => void;
   selectSample: (id: string | null) => void;
   setLoopMode: (mode: "2bars" | "3bars" | "4bars") => void;
+  setCompositionName: (name: string) => void;
+  getSerializableState: () => SavedCompositionData;
+  loadComposition: (id: string, name: string, data: SavedCompositionData) => void;
   reset: () => void;
   _sampleDurations: Map<string, number>;
 }
@@ -130,6 +137,8 @@ export const useCompositionStore = create<CompositionStore>((set, get) => ({
   snapEnabled: true,
   loopMode: "2bars" as "2bars" | "3bars" | "4bars",
   masterPitch: 1,
+  currentCompositionId: null,
+  compositionName: `SklipProof ${compositionCounter}`,
   _sampleDurations: new Map(),
 
   setMasterPitch: (pitch: number) => {
@@ -143,9 +152,7 @@ export const useCompositionStore = create<CompositionStore>((set, get) => ({
   addSample: (sample: Sample) => {
     const state = get();
     const effectiveDuration = sample.durationMs;
-
     const currentEnd = computeUsedMs(state.composition.placedSamples);
-    if (currentEnd + effectiveDuration > TOTAL_DURATION_MS) return;
 
     state._sampleDurations.set(sample.id, sample.durationMs);
 
@@ -264,12 +271,50 @@ export const useCompositionStore = create<CompositionStore>((set, get) => ({
     set({ loopMode: mode, bpm: bpmMap[mode] });
   },
 
+  setCompositionName: (name: string) => {
+    set({ compositionName: name });
+  },
+
+  getSerializableState: () => {
+    const state = get();
+    return {
+      placedSamples: state.composition.placedSamples,
+      bpm: state.bpm,
+      loopMode: state.loopMode,
+      masterPitch: state.masterPitch,
+    };
+  },
+
+  loadComposition: (id: string, name: string, data: SavedCompositionData) => {
+    const bpmMap = { "2bars": 400 / 3, "3bars": 100, "4bars": 200 / 3 };
+    // Reconstruct _sampleDurations from placed samples
+    const durations = new Map<string, number>();
+    for (const ps of data.placedSamples) {
+      if (!durations.has(ps.sampleId)) {
+        durations.set(ps.sampleId, ps.durationMs * ps.pitch);
+      }
+    }
+    set({
+      composition: makeComposition(data.placedSamples),
+      bpm: data.bpm || bpmMap[data.loopMode] || 400 / 3,
+      loopMode: data.loopMode || "2bars",
+      masterPitch: data.masterPitch || 1,
+      currentCompositionId: id,
+      compositionName: name,
+      selectedPlacedSampleId: null,
+      _sampleDurations: durations,
+    });
+  },
+
   reset: () => {
+    compositionCounter++;
     set({
       composition: initialComposition,
       selectedPlacedSampleId: null,
       bpm: 400 / 3,
       loopMode: "2bars" as "2bars" | "3bars" | "4bars",
+      currentCompositionId: null,
+      compositionName: `SklipProof ${compositionCounter}`,
     });
   },
 }));
