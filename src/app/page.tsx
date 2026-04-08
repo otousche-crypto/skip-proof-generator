@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NavAuth } from "@/components/NavAuth";
+import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 
 /* ── SVG helpers (same math as VinylDisk.tsx) ── */
@@ -141,19 +141,26 @@ const categories = [
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-dvh bg-background">
-      {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-6 py-4">
-        <span className="text-xl font-bold text-white">
-          Sklip
-        </span>
-        <div className="absolute right-6">
-          <NavAuth />
-        </div>
-      </nav>
+    <div className="flex flex-col min-h-dvh bg-background overflow-x-hidden">
+      <Navbar />
 
       {/* ── Section 1 : Hero ── */}
       <HeroSection imageUrl="/hero-bg.webp" />
+
+      {/* ── Bande logos ── */}
+      <div className="border-y border-border py-6 px-6">
+        <div className="max-w-6xl mx-auto flex items-center justify-center gap-12 md:gap-20 flex-wrap">
+          <span className="text-xs font-bold uppercase tracking-widest text-text-muted">
+            Compatible avec
+          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/serato.png" alt="Serato" height={22} style={{ height: 22, width: "auto", filter: "invert(1)", mixBlendMode: "screen", opacity: 0.5 }} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/phase.avif" alt="Phase DJ" height={22} style={{ height: 22, width: "auto", opacity: 0.5 }} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/traktor.png" alt="Traktor" style={{ height: 22, width: "auto", filter: "invert(1)", mixBlendMode: "screen", opacity: 0.5 }} />
+        </div>
+      </div>
 
       {/* ── Section 2 : Présentation de l'outil ── */}
       <section className="px-6 py-20 md:py-28 max-w-6xl mx-auto w-full">
@@ -198,8 +205,7 @@ export default function LandingPage() {
             </div>
             <Link
               href="/composer"
-              className="inline-block mt-8 px-6 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-white transition-opacity hover:opacity-90"
-              style={{ backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)" }}
+              className="inline-block mt-8 px-6 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-black bg-white transition-opacity hover:opacity-90"
             >
               Commencer
             </Link>
@@ -207,7 +213,7 @@ export default function LandingPage() {
 
           {/* Animated Vinyl SVG */}
           <div className="flex justify-center">
-            <div className="w-full max-w-[420px]" style={{ transform: "rotate(22deg)" }}>
+            <div className="w-full max-w-[280px] md:max-w-[420px]" style={{ transform: "rotate(22deg)" }}>
               <svg viewBox="0 0 600 600" className="w-full h-auto">
                 <defs>
                   <clipPath id="clip-b1"><path d={b1Arc} /></clipPath>
@@ -287,8 +293,8 @@ export default function LandingPage() {
       <section className="px-6 py-20 md:py-28 max-w-6xl mx-auto w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Animated library mockup */}
-          <div className="flex justify-center">
-            <div className="w-full max-w-xs bg-surface rounded-[var(--radius)] border border-border overflow-hidden shadow-2xl">
+          <div className="flex justify-center order-2 md:order-1">
+            <div className="w-full max-w-xs bg-surface rounded-[var(--radius)] border border-border shadow-2xl" style={{ height: "500px", overflow: "hidden" }}>
               <div className="px-4 py-3 border-b border-border">
                 <p className="text-xs font-bold uppercase tracking-wider text-text-muted">
                   Samples
@@ -373,7 +379,7 @@ export default function LandingPage() {
           </div>
 
           {/* Text */}
-          <div>
+          <div className="order-1 md:order-2">
             <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-3">
               Librairie de samples
             </p>
@@ -415,8 +421,7 @@ export default function LandingPage() {
             </div>
             <Link
               href="/composer"
-              className="inline-block px-6 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-white transition-opacity hover:opacity-90"
-              style={{ backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)" }}
+              className="inline-block px-6 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-black bg-white transition-opacity hover:opacity-90"
             >
               Commencer
             </Link>

@@ -51,29 +51,23 @@ export function HeroSection({ imageUrl }: { imageUrl: string }) {
           className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-white"
           variants={itemVariants}
         >
-          Crée des boucles{" "}
-          <span
-            className="bg-clip-text text-transparent"
-            style={{ backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)" }}
-          >
-            skip-proof
-          </span>{" "}
-          pour le scratch
+          Build your own<br />
+          <span style={{ color: "#FF6B00" }}>
+            Scratch Tools
+          </span>
         </motion.h1>
 
         <motion.p
           className="mt-6 max-w-2xl text-lg leading-8 md:text-xl text-white/80"
           variants={itemVariants}
         >
-          Assemble des samples sur un vinyle de 1818ms, ajuste le pitch et
-          exporte en MP3. Gratuit, sans compte.
+          Compose, ajuste et exporte tes boucles skip-proof en quelques clics.
         </motion.p>
 
         <motion.div className="mt-10" variants={itemVariants}>
           <Link
             href="/composer"
-            className="px-8 py-3 rounded-[var(--radius-sm)] font-bold text-white text-lg transition-opacity hover:opacity-90"
-            style={{ backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)" }}
+            className="px-8 py-3 rounded-[var(--radius-sm)] font-bold text-black text-lg bg-white transition-opacity hover:opacity-90"
           >
             Commencer
           </Link>

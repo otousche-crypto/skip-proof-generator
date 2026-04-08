@@ -8,7 +8,7 @@ import { useSamples } from "@/hooks/useSamples";
 import { useCompositionStore } from "@/store/composition";
 import { createClient } from "@/lib/supabase/client";
 import { CompositionCard } from "@/components/CompositionCard";
-import { NavAuth } from "@/components/NavAuth";
+import { Navbar } from "@/components/Navbar";
 import type { SavedComposition } from "@/types";
 
 export default function ProfilePage() {
@@ -61,21 +61,7 @@ if (authLoading) {
 
   return (
     <div className="flex flex-col min-h-dvh bg-background">
-      {/* Header */}
-      <nav className="relative flex items-center justify-center px-6 py-4 max-w-3xl mx-auto w-full">
-        <Link
-          href="/"
-          className="text-lg font-bold bg-clip-text text-transparent"
-          style={{
-            backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
-          }}
-        >
-          Sklip
-        </Link>
-        <div className="absolute right-6">
-          <NavAuth />
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="flex-1 px-6 py-8 max-w-3xl mx-auto w-full">
         {/* User info */}

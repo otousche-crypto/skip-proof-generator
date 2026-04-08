@@ -14,8 +14,7 @@ export function NavAuth() {
   return (
     <Link
       href="/login"
-      className="px-5 py-2 text-sm font-bold text-white rounded-[var(--radius-sm)] transition-opacity hover:opacity-90"
-      style={{ backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)" }}
+      className="px-5 py-2 text-sm font-bold text-black bg-white rounded-[var(--radius-sm)] transition-opacity hover:opacity-90"
     >
       Se connecter
     </Link>

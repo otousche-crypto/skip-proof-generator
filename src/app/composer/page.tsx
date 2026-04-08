@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { useSamples } from "@/hooks/useSamples";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useCompositionStore } from "@/store/composition";
@@ -11,7 +10,7 @@ import { VinylDisk } from "@/components/VinylDisk";
 import { Waveform } from "@/components/Waveform";
 import { WaveformToolbar } from "@/components/WaveformToolbar";
 import { ExportButton } from "@/components/ExportButton";
-import { NavAuth } from "@/components/NavAuth";
+import { Navbar } from "@/components/Navbar";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import type { Sample } from "@/types";
 
@@ -45,6 +44,23 @@ export default function Home() {
   const { playbackState, currentTimeMs, totalElapsedMs, play, pause, stop, previewSample } =
     useAudioEngine(getSampleById, masterPitch);
 
+  // Spacebar play/pause
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== "Space") return;
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      e.preventDefault();
+      if (playbackState === "playing") {
+        pause();
+      } else {
+        play(useCompositionStore.getState().composition.placedSamples);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [playbackState, play, pause]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background text-text-muted">
@@ -55,24 +71,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-dvh overflow-hidden bg-background p-2 md:p-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-3 gap-2 md:gap-3" onClick={() => selectSample(null)}>
-      {/* Header */}
-      <header
-        className="flex items-center justify-center shrink-0 py-1"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Link
-          href="/"
-          className="text-base md:text-lg font-bold bg-clip-text text-transparent"
-          style={{
-            backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
-          }}
-        >
-          Sklip
-        </Link>
-        <div className="absolute right-3">
-          <NavAuth />
-        </div>
-      </header>
+      <Navbar fixed={false} />
 
       {/* Main content */}
       <div className="flex flex-1 min-h-0 gap-2 md:gap-3">
