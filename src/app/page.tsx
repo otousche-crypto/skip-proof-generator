@@ -187,8 +187,8 @@ export default function LandingPage() {
                 },
                 {
                   color: "#FF6B00",
-                  title: "Exporte en MP3",
-                  desc: "Exporte ta boucle de 1818ms, prête à graver sur vinyle.",
+                  title: "Exporte et Scratch !",
+                  desc: "Récupère ta piste audio, prête à scratcher dans ton DVS !",
                 },
               ].map((item) => (
                 <div key={item.title} className="flex gap-4">
