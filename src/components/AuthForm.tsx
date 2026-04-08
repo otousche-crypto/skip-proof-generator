@@ -98,10 +98,7 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           <button
             type="submit"
             disabled={loading}
-            className="py-2.5 rounded-[var(--radius-sm)] font-bold text-white text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-            style={{
-              backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
-            }}
+            className="py-2.5 rounded-[var(--radius-sm)] font-bold text-black bg-white text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {loading
               ? "..."
