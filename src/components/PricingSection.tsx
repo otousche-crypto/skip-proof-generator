@@ -58,7 +58,7 @@ export function PricingSection() {
           </span>
           <button
             onClick={() => setAnnual(!annual)}
-            className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${annual ? "bg-accent-violet" : "bg-surface-alt"}`}
+            className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${annual ? "bg-accent-orange" : "bg-surface-alt"}`}
           >
             <span
               className="absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-200"
@@ -69,7 +69,7 @@ export function PricingSection() {
             <span className={`text-sm font-medium ${annual ? "text-text" : "text-text-muted"}`}>
               Annuel
             </span>
-            <span className="text-xs font-bold text-accent-violet">
+            <span className="text-xs font-bold text-accent-orange">
               Save {SAVINGS_PCT}%
             </span>
           </div>
@@ -118,10 +118,10 @@ export function PricingSection() {
         </div>
 
         {/* Pro */}
-        <div className="flex flex-col rounded-[var(--radius)] border border-accent-violet/50 bg-surface p-6 relative">
+        <div className="flex flex-col rounded-[var(--radius)] border border-accent-orange/50 bg-surface p-6 relative">
 
           <div className="mb-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-accent-violet mb-4">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-accent-orange mb-4">
               Pro
             </h3>
             {annual ? (
@@ -147,12 +147,12 @@ export function PricingSection() {
             )}
           </div>
 
-          <hr className="border-accent-violet/20 mb-6" />
+          <hr className="border-accent-orange/20 mb-6" />
 
           <ul className="space-y-3 flex-1 mb-8">
             {PRO_FEATURES.map((f) => (
               <li key={f.label} className="flex items-center gap-3 text-sm">
-                <Check className="w-4 h-4 shrink-0 text-accent-violet" />
+                <Check className="w-4 h-4 shrink-0 text-accent-orange" />
                 <span className="text-text">{f.label}</span>
               </li>
             ))}
