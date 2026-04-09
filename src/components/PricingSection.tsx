@@ -4,26 +4,17 @@ import Link from "next/link";
 import { useState } from "react";
 import { Check, X } from "lucide-react";
 
-const FREE_FEATURES = [
-  { label: "Compositeur visuel complet", included: true },
-  { label: "30 samples de base", included: true },
-  { label: "3 compositions sauvegardées", included: true },
-  { label: "Export MP3 (5/mois)", included: true },
-  { label: "Export WAV haute qualité", included: false },
-  { label: "Bibliothèque +1000 samples", included: false },
-  { label: "Upload de tes propres samples", included: false },
-  { label: "Exports illimités", included: false },
-  { label: "Compositions illimitées", included: false },
+const FEATURES = [
+  "Compositeur visuel complet",
+  "Bibliothèque +1000 samples",
+  "Compositions illimitées",
+  "Exports illimités",
+  "Export WAV haute qualité",
+  "Upload de tes propres samples",
 ];
 
-const PRO_FEATURES = [
-  { label: "Compositeur visuel complet", included: true },
-  { label: "Bibliothèque +1000 samples", included: true },
-  { label: "Compositions illimitées", included: true },
-  { label: "Exports illimités", included: true },
-  { label: "Export WAV haute qualité", included: true },
-  { label: "Upload de tes propres samples", included: true },
-];
+const FREE_FEATURES = FEATURES.map((label) => ({ label, included: false }));
+const PRO_FEATURES = FEATURES.map((label) => ({ label, included: true }));
 
 const MONTHLY_PRICE = 4.99;
 const ANNUAL_PRICE = 39.99;
