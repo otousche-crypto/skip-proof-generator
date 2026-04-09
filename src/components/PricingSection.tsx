@@ -23,9 +23,6 @@ const PRO_FEATURES = [
   { label: "Exports illimités", included: true },
   { label: "Export WAV haute qualité", included: true },
   { label: "Upload de tes propres samples", included: true },
-  { label: "Packs signature (DJs invités)", included: true },
-  { label: "Accès prioritaire aux nouveautés", included: true },
-  { label: "Support prioritaire", included: true },
 ];
 
 const MONTHLY_PRICE = 4.99;
