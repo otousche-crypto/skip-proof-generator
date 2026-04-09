@@ -8,7 +8,6 @@ import { useSamples } from "@/hooks/useSamples";
 import { useCompositionStore } from "@/store/composition";
 import { createClient } from "@/lib/supabase/client";
 import { CompositionCard } from "@/components/CompositionCard";
-import { Navbar } from "@/components/Navbar";
 import type { SavedComposition } from "@/types";
 
 export default function ProfilePage() {
@@ -61,8 +60,6 @@ if (authLoading) {
 
   return (
     <div className="flex flex-col min-h-dvh bg-background">
-      <Navbar />
-
       <main className="flex-1 px-6 py-8 max-w-3xl mx-auto w-full">
         {/* User info */}
         <div className="flex items-center gap-4 mb-10">

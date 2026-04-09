@@ -10,7 +10,6 @@ import { VinylDisk } from "@/components/VinylDisk";
 import { Waveform } from "@/components/Waveform";
 import { WaveformToolbar } from "@/components/WaveformToolbar";
 import { ExportButton } from "@/components/ExportButton";
-import { Navbar } from "@/components/Navbar";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import type { Sample } from "@/types";
 
@@ -70,9 +69,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col h-dvh overflow-hidden bg-background p-2 md:p-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-3 gap-2 md:gap-3" onClick={() => selectSample(null)}>
-      <Navbar fixed={false} />
-
+    <div className="flex flex-col h-dvh overflow-hidden bg-background pt-16 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:px-3 md:pb-3 gap-2 md:gap-3" onClick={() => selectSample(null)}>
       {/* Main content */}
       <div className="flex flex-1 min-h-0 gap-2 md:gap-3">
         {/* Mobile: vertical "Library" tab */}

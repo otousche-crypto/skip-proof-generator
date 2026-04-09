@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { NavAuth } from "@/components/NavAuth";
 
-export function Navbar({ fixed = true }: { fixed?: boolean }) {
+export function Navbar() {
   return (
-    <nav className={`flex items-center justify-center px-6 py-4 ${fixed ? "fixed top-0 left-0 right-0 z-50" : "relative shrink-0"}`}>
+    <nav className="flex items-center justify-center h-16 px-6 fixed top-0 left-0 right-0 z-50">
       <Link href="/" className="text-xl font-bold text-white">
         Sklip
       </Link>

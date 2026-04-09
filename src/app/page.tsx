@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
+import { PricingSection } from "@/components/PricingSection";
 
 /* ── SVG helpers (same math as VinylDisk.tsx) ── */
 
@@ -142,8 +142,6 @@ const categories = [
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-dvh bg-background overflow-x-hidden">
-      <Navbar />
-
       {/* ── Section 1 : Hero ── */}
       <HeroSection imageUrl="/hero-bg.webp" />
 
@@ -168,7 +166,7 @@ export default function LandingPage() {
           {/* Text */}
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-3">
-              Comment ça marche
+              un outil dédié
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-text mb-8">
               Compose visuellement sur un vinyle
@@ -177,12 +175,12 @@ export default function LandingPage() {
               {[
                 {
                   color: "#E85D04",
-                  title: "Glisse des samples",
-                  desc: "Ajoute des samples depuis la librairie et positionne-les sur le vinyle.",
+                  title: "Sélectionne tes samples",
+                  desc: "Ajoute des samples depuis notre librairie.",
                 },
                 {
                   color: "#7C3AED",
-                  title: "Redimensionne",
+                  title: "Redimensionne et ajuste",
                   desc: "Ajuste la durée et le pitch de chaque sample en tirant les poignées.",
                 },
                 {
@@ -384,7 +382,7 @@ export default function LandingPage() {
               Librairie de samples
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-text mb-6">
-              +99 samples pour le scratch
+              +1000 Scratch Sounds
             </h2>
             <p className="text-text-muted mb-6">
               Une librairie complète de samples vocaux pensés pour le scratch : ad-libs, phrases, mots et effets classiques.
@@ -428,6 +426,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Section 4 : Pricing ── */}
+      <PricingSection />
 
       {/* ── Footer ── */}
       <footer className="px-6 py-8 text-center text-text-muted text-xs">
