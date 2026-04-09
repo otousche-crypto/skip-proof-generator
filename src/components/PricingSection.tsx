@@ -146,7 +146,7 @@ export function PricingSection() {
           <ul className="space-y-3 flex-1 mb-8">
             {PRO_FEATURES.map((f) => (
               <li key={f.label} className="flex items-center gap-3 text-sm">
-                <Check className="w-4 h-4 shrink-0 text-accent-orange" />
+                <Check className="w-4 h-4 shrink-0 text-green-500" />
                 <span className="text-text">{f.label}</span>
               </li>
             ))}
