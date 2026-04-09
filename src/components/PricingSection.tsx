@@ -8,7 +8,7 @@ const FREE_FEATURES = [
   { label: "Compositeur visuel complet", included: true },
   { label: "Bibliothèque +50 samples", included: true },
   { label: "5 Compositions", included: true },
-  { label: "Exports illimités", included: true },
+  { label: "Exports illimités", included: false },
   { label: "Export WAV haute qualité", included: false },
   { label: "Upload de tes propres samples", included: false },
 ];
