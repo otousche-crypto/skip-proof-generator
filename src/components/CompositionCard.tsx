@@ -1,6 +1,7 @@
 "use client";
 
 import type { Sample, SavedComposition } from "@/types";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const TOTAL_MS = 1800;
 const CENTER = 50;
@@ -44,6 +45,7 @@ export function CompositionCard({
   onLoad,
   onDelete,
 }: CompositionCardProps) {
+  const { t } = useTranslation();
   const sampleCount = composition.data.placedSamples?.length ?? 0;
   const date = new Date(composition.created_at).toLocaleDateString("fr-FR", {
     day: "numeric",
@@ -134,13 +136,13 @@ export function CompositionCard({
             backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
           }}
         >
-          Charger
+          {t.card.load}
         </button>
         <button
           onClick={() => onDelete(composition.id)}
           className="px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium bg-red-900/20 text-red-400 hover:bg-red-900/40 transition-colors"
         >
-          Supprimer
+          {t.card.delete}
         </button>
       </div>
     </div>

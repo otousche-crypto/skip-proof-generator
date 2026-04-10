@@ -3,24 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Check, X } from "lucide-react";
-
-const FREE_FEATURES = [
-  { label: "Compositeur visuel complet", included: true },
-  { label: "Bibliothèque +50 samples", included: true },
-  { label: "5 Compositions", included: true },
-  { label: "Exports illimités", included: false },
-  { label: "Export WAV haute qualité", included: false },
-  { label: "Upload de tes propres samples", included: false },
-];
-
-const PRO_FEATURES = [
-  { label: "Compositeur visuel complet", included: true },
-  { label: "Bibliothèque +1000 samples", included: true },
-  { label: "Compositions illimitées", included: true },
-  { label: "Exports illimités", included: true },
-  { label: "Export WAV haute qualité", included: true },
-  { label: "Upload de tes propres samples", included: true },
-];
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const MONTHLY_PRICE = 4.99;
 const ANNUAL_PRICE = 39.99;
@@ -30,25 +13,44 @@ const SAVINGS_PCT = Math.round(((MONTHLY_PRICE * 12) - ANNUAL_PRICE) / (MONTHLY_
 
 export function PricingSection() {
   const [annual, setAnnual] = useState(true);
+  const { t } = useTranslation();
+
+  const FREE_FEATURES = [
+    { label: t.pricing.features.full_composer, included: true },
+    { label: t.pricing.features.library_50, included: true },
+    { label: t.pricing.features.compositions_5, included: true },
+    { label: t.pricing.features.unlimited_exports, included: false },
+    { label: t.pricing.features.wav_export, included: false },
+    { label: t.pricing.features.upload_samples, included: false },
+  ];
+
+  const PRO_FEATURES = [
+    { label: t.pricing.features.full_composer, included: true },
+    { label: t.pricing.features.library_1000, included: true },
+    { label: t.pricing.features.unlimited_compositions, included: true },
+    { label: t.pricing.features.unlimited_exports, included: true },
+    { label: t.pricing.features.wav_export, included: true },
+    { label: t.pricing.features.upload_samples, included: true },
+  ];
 
   return (
     <section className="px-6 py-20 md:py-28 max-w-6xl mx-auto w-full">
       {/* Header */}
       <div className="text-center mb-12">
         <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-3">
-          Pricing
+          {t.pricing.tag}
         </p>
         <h2 className="text-3xl md:text-4xl font-bold text-text mb-4">
-          Simple et transparent
+          {t.pricing.title}
         </h2>
         <p className="text-text-muted text-sm max-w-md mx-auto">
-          Commence gratuitement. Passe au Pro quand tu veux débloquer toute la librairie.
+          {t.pricing.subtitle}
         </p>
 
         {/* Toggle mensuel / annuel */}
         <div className="relative flex items-center justify-center gap-3 mt-8">
           <span className={`text-sm font-medium ${!annual ? "text-text" : "text-text-muted"}`}>
-            Mensuel
+            {t.pricing.monthly}
           </span>
           <button
             onClick={() => setAnnual(!annual)}
@@ -61,10 +63,10 @@ export function PricingSection() {
           </button>
           <div className="flex flex-col items-start">
             <span className={`text-sm font-medium ${annual ? "text-text" : "text-text-muted"}`}>
-              Annuel
+              {t.pricing.annual}
             </span>
             <span className="text-xs font-bold text-accent-orange">
-              Save {SAVINGS_PCT}%
+              {t.pricing.save_pct(SAVINGS_PCT)}
             </span>
           </div>
         </div>
@@ -81,9 +83,9 @@ export function PricingSection() {
             </h3>
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-bold text-text">0€</span>
-              <span className="text-text-muted text-sm">/ mois</span>
+              <span className="text-text-muted text-sm">{t.pricing.per_month}</span>
             </div>
-            <p className="text-xs text-text-muted mt-1">Pour toujours</p>
+            <p className="text-xs text-text-muted mt-1">{t.pricing.forever}</p>
           </div>
 
           <hr className="border-border mb-6" />
@@ -107,7 +109,7 @@ export function PricingSection() {
             href="/composer"
             className="block text-center px-6 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-text border border-border hover:bg-surface-alt transition-colors"
           >
-            Commencer gratuitement
+            {t.pricing.cta_free}
           </Link>
         </div>
 
@@ -122,20 +124,20 @@ export function PricingSection() {
               <div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-bold text-text">{ANNUAL_MONTHLY_EQUIV}€</span>
-                  <span className="text-text-muted text-sm">/ mois</span>
+                  <span className="text-text-muted text-sm">{t.pricing.per_month}</span>
                 </div>
                 <p className="text-xs text-text-muted mt-1">
-                  Facturé {ANNUAL_PRICE}€/an
+                  {t.pricing.billed_annually(ANNUAL_PRICE)}
                 </p>
               </div>
             ) : (
               <div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-bold text-text">{MONTHLY_PRICE}€</span>
-                  <span className="text-text-muted text-sm">/ mois</span>
+                  <span className="text-text-muted text-sm">{t.pricing.per_month}</span>
                 </div>
                 <p className="text-xs text-text-muted mt-1">
-                  Ou {ANNUAL_PRICE}€/an — économise {SAVINGS}€
+                  {t.pricing.or_annual(ANNUAL_PRICE, Number(SAVINGS))}
                 </p>
               </div>
             )}
@@ -156,7 +158,7 @@ export function PricingSection() {
             href="/login"
             className="block text-center px-6 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-black bg-white hover:opacity-90 transition-opacity"
           >
-            {annual ? `Démarrer à ${ANNUAL_PRICE}€/an` : `Démarrer à ${MONTHLY_PRICE}€/mois`}
+            {annual ? t.pricing.cta_pro_annual(ANNUAL_PRICE) : t.pricing.cta_pro_monthly(MONTHLY_PRICE)}
           </Link>
         </div>
 

@@ -5,6 +5,7 @@ import { useCompositionStore } from "@/store/composition";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthForm } from "@/components/AuthForm";
 import type { Sample } from "@/types";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 type ExportFormat = "mp3" | "wav";
 
@@ -37,6 +38,7 @@ function ExportModal({
   const [exporting, setExporting] = useState(false);
   const [progress, setProgress] = useState(0);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   const sampleMap = new Map(samples.map((s) => [s.id, s]));
 
@@ -176,7 +178,7 @@ function ExportModal({
               backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
             }}
           >
-            Exporter
+            {t.export.title}
           </h2>
           {!exporting && (
             <button
@@ -193,7 +195,7 @@ function ExportModal({
           {/* Track name */}
           <div>
             <label className="block text-xs font-medium text-text-muted uppercase tracking-wide mb-1.5">
-              Nom de la piste
+              {t.export.track_name}
             </label>
             <input
               type="text"
@@ -208,7 +210,7 @@ function ExportModal({
           {/* Loops */}
           <div>
             <label className="block text-xs font-medium text-text-muted uppercase tracking-wide mb-1.5">
-              Nombre de loops
+              {t.export.loops}
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -234,14 +236,14 @@ function ExportModal({
               />
             </div>
             <div className="text-xs text-text-muted font-mono mt-1">
-              Durée totale : {totalDurationSec}s
+              {t.export.total_duration(Number(totalDurationSec))}
             </div>
           </div>
 
           {/* Format */}
           <div>
             <label className="block text-xs font-medium text-text-muted uppercase tracking-wide mb-1.5">
-              Format
+              {t.export.format}
             </label>
             <div className="flex gap-2">
               {(["mp3", "wav"] as const).map((f) => (
@@ -275,7 +277,7 @@ function ExportModal({
                 />
               </div>
               <div className="text-xs text-text-muted font-mono text-center mt-1.5">
-                Export en cours... {progress}%
+                {t.export.exporting(progress)}
               </div>
             </div>
           )}
@@ -288,7 +290,7 @@ function ExportModal({
             disabled={exporting}
             className="flex-1 px-4 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold bg-surface-alt text-text-muted hover:text-text transition-colors disabled:opacity-30"
           >
-            Annuler
+            {t.export.cancel}
           </button>
           <button
             onClick={handleExport}
@@ -298,7 +300,7 @@ function ExportModal({
               background: "linear-gradient(135deg, #FF6B00, #7C3AED)",
             }}
           >
-            {exporting ? "Export..." : "Télécharger"}
+            {exporting ? t.export.exporting_btn : t.export.download}
           </button>
         </div>
       </div>
@@ -360,6 +362,7 @@ function writeString(view: DataView, offset: number, str: string) {
 
 function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
   const backdropRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -384,7 +387,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
             ✕
           </button>
           <div className="mb-4 text-center text-sm text-text-muted">
-            Connecte-toi pour exporter ta composition
+            {t.export.auth_required}
           </div>
           <AuthForm onSuccess={onSuccess} />
         </div>
@@ -403,6 +406,7 @@ function OverflowModal({
   onExportAnyway: () => void;
 }) {
   const backdropRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -427,16 +431,16 @@ function OverflowModal({
             className="text-base font-bold bg-clip-text text-transparent"
             style={{ backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)" }}
           >
-            Composition trop longue
+            {t.export.overflow_title}
           </h2>
         </div>
         <div className="px-5 py-4 space-y-3">
           <p className="text-sm text-text">
-            Ta composition dépasse la durée d&apos;un tour de disque de{" "}
+            {t.export.overflow_msg}{" "}
             <span className="font-mono font-bold text-accent-orange">{Math.round(overflowMs)}ms</span>.
           </p>
           <p className="text-sm text-text-muted">
-            Ajuste la durée ou le pitch de tes samples pour que l&apos;ensemble tienne en 1818ms. Sinon, le dernier sample sera coupé à l&apos;export.
+            {t.export.overflow_hint}
           </p>
         </div>
         <div className="flex gap-3 px-5 py-4 border-t border-border">
@@ -444,13 +448,13 @@ function OverflowModal({
             onClick={onClose}
             className="flex-1 px-4 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold bg-surface-alt text-text hover:text-accent-orange transition-colors"
           >
-            Ajuster
+            {t.export.adjust}
           </button>
           <button
             onClick={onExportAnyway}
             className="flex-1 px-4 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-text-muted bg-surface-alt hover:text-text transition-colors"
           >
-            Exporter quand même
+            {t.export.export_anyway}
           </button>
         </div>
       </div>
@@ -465,6 +469,7 @@ export function ExportButton({ samples }: { samples: Sample[] }) {
   const [showAuth, setShowAuth] = useState(false);
   const [showOverflow, setShowOverflow] = useState(false);
 
+  const { t } = useTranslation();
   const disabled = composition.placedSamples.length === 0;
   const overflowMs = composition.usedMs - composition.totalDurationMs;
 
@@ -496,7 +501,7 @@ export function ExportButton({ samples }: { samples: Sample[] }) {
             : "linear-gradient(135deg, #FF6B00, #7C3AED)",
         }}
       >
-        Exporter
+        {t.export.export_btn}
       </button>
       {showOverflow && (
         <OverflowModal

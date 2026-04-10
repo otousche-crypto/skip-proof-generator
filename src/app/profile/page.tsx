@@ -9,8 +9,10 @@ import { useCompositionStore } from "@/store/composition";
 import { createClient } from "@/lib/supabase/client";
 import { CompositionCard } from "@/components/CompositionCard";
 import type { SavedComposition } from "@/types";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const { samples } = useSamples();
   const router = useRouter();
@@ -49,7 +51,7 @@ export default function ProfilePage() {
 if (authLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background text-text-muted">
-        Chargement...
+        {t.profile.loading}
       </div>
     );
   }
@@ -82,7 +84,7 @@ if (authLoading) {
         {/* Compositions */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-text">
-            Mes compositions
+            {t.profile.my_compositions}
           </h2>
           <Link
             href="/composer"
@@ -91,20 +93,20 @@ if (authLoading) {
               backgroundImage: "linear-gradient(135deg, #FF6B00, #7C3AED)",
             }}
           >
-            + New
+            {t.profile.new}
           </Link>
         </div>
 
         {loading ? (
-          <p className="text-text-muted text-sm">Chargement...</p>
+          <p className="text-text-muted text-sm">{t.profile.loading}</p>
         ) : compositions.length === 0 ? (
           <div className="bg-surface rounded-[var(--radius)] border border-border p-8 text-center">
-            <p className="text-text-muted">Aucune composition sauvegardée.</p>
+            <p className="text-text-muted">{t.profile.no_compositions}</p>
             <Link
               href="/composer"
               className="inline-block mt-3 text-sm text-[#FF6B00] hover:underline"
             >
-              Créer une composition
+              {t.profile.create}
             </Link>
           </div>
         ) : (

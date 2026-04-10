@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import type { Category, Sample } from "@/types";
 import { useCompositionStore } from "@/store/composition";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const CATEGORIES: (Category | "All")[] = [
   "All",
@@ -28,6 +29,7 @@ export function SampleLibrary({
   const composition = useCompositionStore((s) => s.composition);
   const stopPreviewRef = useRef<(() => void) | null>(null);
   const [previewingId, setPreviewingId] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const toggleCategory = (cat: Category | "All") => {
     setOpenCategories((prev) => {
@@ -90,11 +92,11 @@ export function SampleLibrary({
           value={compositionName}
           onChange={(e) => setCompositionName(e.target.value)}
           className="w-full bg-transparent text-text font-bold text-sm border-b border-transparent hover:border-border focus:border-accent-orange focus:outline-none py-1 truncate"
-          placeholder="Nom du projet"
+          placeholder={t.library.project_name}
         />
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold tracking-wide uppercase text-text-muted">
-            Samples
+            {t.library.samples_title}
           </h2>
         </div>
         <div className="relative">
@@ -102,7 +104,7 @@ export function SampleLibrary({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Rechercher..."
+            placeholder={t.library.search}
             className="w-full bg-surface-alt rounded-[var(--radius-sm)] px-3 py-2 text-xs text-text placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-accent-orange"
           />
           {searchQuery && (
@@ -171,7 +173,7 @@ export function SampleLibrary({
                             e.stopPropagation();
                             togglePreview(sample);
                           }}
-                          title="Pré-écouter"
+                          title={t.library.preview}
                         >
                           {previewingId === sample.id ? (
                             <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">

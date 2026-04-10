@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { UserMenu } from "@/components/UserMenu";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export function NavAuth() {
   const { user, loading } = useAuth();
+  const { t } = useTranslation();
 
   if (loading) return <div className="w-8 h-8" />;
 
@@ -16,7 +18,7 @@ export function NavAuth() {
       href="/login"
       className="px-5 py-2 text-sm font-bold text-black bg-white rounded-[var(--radius-sm)] transition-opacity hover:opacity-90"
     >
-      Se connecter
+      {t.nav.sign_in}
     </Link>
   );
 }

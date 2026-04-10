@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export function UserMenu() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   if (loading || !user) return null;
 
@@ -52,13 +54,13 @@ export function UserMenu() {
               onClick={() => setOpen(false)}
               className="block px-3 py-2 text-sm text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
             >
-              Profil
+              {t.user_menu.profile}
             </Link>
             <button
               onClick={handleLogout}
               className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-surface-alt transition-colors"
             >
-              Déconnexion
+              {t.user_menu.logout}
             </button>
           </div>
         </>

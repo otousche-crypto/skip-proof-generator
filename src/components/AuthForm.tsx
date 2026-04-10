@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
   const router = useRouter();
@@ -12,6 +13,7 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +53,7 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
         router.refresh();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue");
+      setError(err instanceof Error ? err.message : t.auth.error_default);
       setLoading(false);
     }
   };
@@ -60,14 +62,14 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
     <div className="w-full max-w-sm mx-auto">
       <div className="bg-surface rounded-[var(--radius)] border border-border p-8">
         <h2 className="text-xl font-bold text-text text-center mb-6">
-          {mode === "login" ? "Connexion" : "Créer un compte"}
+          {mode === "login" ? t.auth.login_title : t.auth.signup_title}
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {mode === "signup" && (
             <input
               type="text"
-              placeholder="Nom d'affichage"
+              placeholder={t.auth.display_name}
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               className="bg-surface-alt border border-border rounded-[var(--radius-sm)] px-4 py-2.5 text-text text-sm placeholder:text-text-muted focus:outline-none focus:border-[#FF6B00] transition-colors"
@@ -75,7 +77,7 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           )}
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t.auth.email}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -83,7 +85,7 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           />
           <input
             type="password"
-            placeholder="Mot de passe"
+            placeholder={t.auth.password}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -103,15 +105,15 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
             {loading
               ? "..."
               : mode === "login"
-                ? "Se connecter"
-                : "Créer le compte"}
+                ? t.auth.sign_in_btn
+                : t.auth.create_account_btn}
           </button>
         </form>
 
         <p className="text-text-muted text-sm text-center mt-6">
           {mode === "login" ? (
             <>
-              Pas encore de compte ?{" "}
+              {t.auth.no_account}{" "}
               <button
                 onClick={() => {
                   setMode("signup");
@@ -119,12 +121,12 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
                 }}
                 className="text-[#FF6B00] hover:underline"
               >
-                S&apos;inscrire
+                {t.auth.sign_up}
               </button>
             </>
           ) : (
             <>
-              Déjà un compte ?{" "}
+              {t.auth.already_account}{" "}
               <button
                 onClick={() => {
                   setMode("login");
@@ -132,7 +134,7 @@ export function AuthForm({ onSuccess }: { onSuccess?: () => void } = {}) {
                 }}
                 className="text-[#FF6B00] hover:underline"
               >
-                Se connecter
+                {t.auth.sign_in_link}
               </button>
             </>
           )}

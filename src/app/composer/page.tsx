@@ -12,8 +12,10 @@ import { WaveformToolbar } from "@/components/WaveformToolbar";
 import { ExportButton } from "@/components/ExportButton";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import type { Sample } from "@/types";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export default function Home() {
+  const { t } = useTranslation();
   const { samples, loading } = useSamples();
   const composition = useCompositionStore((s) => s.composition);
   const reset = useCompositionStore((s) => s.reset);
@@ -63,7 +65,7 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background text-text-muted">
-        Loading samples...
+        {t.composer.loading}
       </div>
     );
   }
@@ -79,7 +81,7 @@ export default function Home() {
           style={{ writingMode: "vertical-rl" }}
         >
           <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
-            + Add Samples
+            {t.composer.add_samples}
           </span>
         </button>
 
@@ -141,7 +143,7 @@ export default function Home() {
                     useCompositionStore.getState().removeSample(selectedId);
                   }}
                   className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-red-900/30 text-red-400 hover:bg-red-900/50 transition-colors"
-                  title="Supprimer le sample"
+                  title={t.composer.delete_sample}
                 >
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="1.5,3 10.5,3" />
@@ -150,11 +152,11 @@ export default function Home() {
                     <line x1="5" y1="5.5" x2="5" y2="8.5" />
                     <line x1="7" y1="5.5" x2="7" y2="8.5" />
                   </svg>
-                  Delete
+                  {t.composer.delete}
                 </button>
               ) : (
                 <>
-                  <span className="text-[10px] text-text-muted font-mono">Pitch</span>
+                  <span className="text-[10px] text-text-muted font-mono">{t.composer.pitch}</span>
                   <input
                     type="range"
                     min={-50}

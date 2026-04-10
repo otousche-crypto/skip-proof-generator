@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -28,6 +29,7 @@ const itemVariants: Variants = {
 };
 
 export function HeroSection({ imageUrl }: { imageUrl: string }) {
+  const { t } = useTranslation();
   return (
     <section className="relative flex min-h-[700px] h-screen w-full items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -51,9 +53,9 @@ export function HeroSection({ imageUrl }: { imageUrl: string }) {
           className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-white"
           variants={itemVariants}
         >
-          Build your own<br />
+          {t.hero.title_line1}<br />
           <span style={{ color: "#FF6B00" }}>
-            Scratch Tools
+            {t.hero.title_line2}
           </span>
         </motion.h1>
 
@@ -61,7 +63,7 @@ export function HeroSection({ imageUrl }: { imageUrl: string }) {
           className="mt-6 max-w-2xl text-lg leading-8 md:text-xl text-white/80"
           variants={itemVariants}
         >
-          Compose, ajuste et exporte tes boucles skip-proof en quelques clics.
+          {t.hero.subtitle}
         </motion.p>
 
         <motion.div className="mt-10" variants={itemVariants}>
@@ -69,7 +71,7 @@ export function HeroSection({ imageUrl }: { imageUrl: string }) {
             href="/composer"
             className="px-8 py-3 rounded-[var(--radius-sm)] font-bold text-black text-lg bg-white transition-opacity hover:opacity-90"
           >
-            Commencer
+            {t.hero.cta}
           </Link>
         </motion.div>
       </motion.div>

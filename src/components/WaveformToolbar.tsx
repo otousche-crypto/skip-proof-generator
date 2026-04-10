@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useCompositionStore } from "@/store/composition";
 import type { PlaybackState } from "@/hooks/useAudioEngine";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export function WaveformToolbar({
   playbackState,
@@ -26,6 +27,7 @@ export function WaveformToolbar({
   const toggleSnap = useCompositionStore((s) => s.toggleSnap);
 
 
+  const { t } = useTranslation();
   const [metronomeOn, setMetronomeOn] = useState(false);
   const metroCtxRef = useRef<AudioContext | null>(null);
   const metroIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -105,12 +107,12 @@ export function WaveformToolbar({
         <button
           onClick={toggleSnap}
           className={pillClass(snapEnabled)}
-          title="Snap magnétique"
+          title={t.toolbar.snap}
         >
           <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="inline mr-0.5 -mt-px">
             <path d="M8 0C5.8 0 4 1.8 4 4v5a4 4 0 0 0 8 0V4c0-2.2-1.8-4-4-4zM6 4c0-1.1.9-2 2-2s2 .9 2 2v5a2 2 0 1 1-4 0V4zM1 7h2v2a5 5 0 0 0 10 0V7h2v2a7 7 0 0 1-14 0V7z"/>
           </svg>
-          Magnet
+          {t.toolbar.magnet}
         </button>
       </div>
 
@@ -135,12 +137,12 @@ export function WaveformToolbar({
           <button
             onClick={toggleSnap}
             className={pillClass(snapEnabled)}
-            title="Snap magnétique"
+            title={t.toolbar.snap}
           >
             <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="inline mr-0.5 -mt-px">
               <path d="M8 0C5.8 0 4 1.8 4 4v5a4 4 0 0 0 8 0V4c0-2.2-1.8-4-4-4zM6 4c0-1.1.9-2 2-2s2 .9 2 2v5a2 2 0 1 1-4 0V4zM1 7h2v2a5 5 0 0 0 10 0V7h2v2a7 7 0 0 1-14 0V7z"/>
             </svg>
-            Magnet
+            {t.toolbar.magnet}
           </button>
         </div>
         {/* Left spacer (mobile only) */}
@@ -152,7 +154,7 @@ export function WaveformToolbar({
             onClick={onStop}
             disabled={playbackState === "stopped"}
             className="w-8 h-8 rounded-full bg-surface-alt flex items-center justify-center transition-colors hover:bg-border disabled:opacity-30"
-            title="Stop"
+            title={t.toolbar.stop}
           >
             <svg width="10" height="10" viewBox="0 0 16 16" fill="white">
               <rect x="3" y="3" width="10" height="10" rx="1" />
@@ -162,7 +164,7 @@ export function WaveformToolbar({
             onClick={playbackState === "playing" ? onPause : onPlay}
             disabled={playbackState !== "playing" && disabled}
             className="w-9 h-9 rounded-full bg-accent-orange flex items-center justify-center transition-colors hover:brightness-110 disabled:opacity-30"
-            title={playbackState === "playing" ? "Pause" : "Play"}
+            title={playbackState === "playing" ? t.toolbar.pause : t.toolbar.play}
           >
             {playbackState === "playing" ? (
               <svg width="14" height="14" viewBox="0 0 16 16" fill="white">
@@ -182,7 +184,7 @@ export function WaveformToolbar({
                 ? "bg-accent-violet text-white"
                 : "bg-surface-alt text-text-muted hover:bg-border"
             }`}
-            title="Métronome"
+            title={t.toolbar.metronome}
           >
             <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
               <path d="M6 0h4l2 14H4L6 0zM7 2L5.5 13h5L9 2H7zM7.5 4h1v5h-1V4zM3 14h10v2H3v-2z"/>

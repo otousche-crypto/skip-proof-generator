@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { HeroSection } from "@/components/HeroSection";
 import { PricingSection } from "@/components/PricingSection";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 /* ── SVG helpers (same math as VinylDisk.tsx) ── */
 
@@ -140,6 +143,44 @@ const categories = [
 /* ── Page ── */
 
 export default function LandingPage() {
+  const { t, locale, setLocale } = useTranslation();
+
+  const steps = [
+    {
+      color: "#E85D04",
+      title: t.landing.step1_title,
+      desc: t.landing.step1_desc,
+    },
+    {
+      color: "#7C3AED",
+      title: t.landing.step2_title,
+      desc: t.landing.step2_desc,
+    },
+    {
+      color: "#FF6B00",
+      title: t.landing.step3_title,
+      desc: t.landing.step3_desc,
+    },
+  ];
+
+  const qualities = [
+    {
+      color: "#E85D04",
+      title: t.landing.quality_title,
+      desc: t.landing.quality_desc,
+    },
+    {
+      color: "#7C3AED",
+      title: t.landing.original_title,
+      desc: t.landing.original_desc,
+    },
+    {
+      color: "#0077B6",
+      title: t.landing.royalty_free_title,
+      desc: t.landing.royalty_free_desc,
+    },
+  ];
+
   return (
     <div className="flex flex-col min-h-dvh bg-background overflow-x-hidden">
       {/* ── Section 1 : Hero ── */}
@@ -149,7 +190,7 @@ export default function LandingPage() {
       <div className="border-y border-border py-6 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-center gap-12 md:gap-20 flex-wrap">
           <span className="text-xs font-bold uppercase tracking-widest text-text-muted">
-            Compatible avec
+            {t.landing.compat_with}
           </span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logos/serato.png" alt="Serato" height={22} style={{ height: 22, width: "auto", filter: "invert(1)", mixBlendMode: "screen", opacity: 0.5 }} />
@@ -166,29 +207,13 @@ export default function LandingPage() {
           {/* Text */}
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-3">
-              un outil dédié
+              {t.landing.section2_tag}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-text mb-8">
-              Compose visuellement sur un vinyle
+              {t.landing.section2_title}
             </h2>
             <div className="space-y-6">
-              {[
-                {
-                  color: "#E85D04",
-                  title: "Sélectionne tes samples",
-                  desc: "Ajoute des samples depuis notre librairie.",
-                },
-                {
-                  color: "#7C3AED",
-                  title: "Redimensionne et ajuste",
-                  desc: "Ajuste la durée et le pitch de chaque sample en tirant les poignées.",
-                },
-                {
-                  color: "#FF6B00",
-                  title: "Exporte et Scratch !",
-                  desc: "Récupère ta piste audio, prête à scratcher dans ton DVS !",
-                },
-              ].map((item) => (
+              {steps.map((item) => (
                 <div key={item.title} className="flex gap-4">
                   <div
                     className="w-3 h-3 rounded-full mt-1.5 shrink-0"
@@ -205,7 +230,7 @@ export default function LandingPage() {
               href="/composer"
               className="inline-block mt-8 px-6 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-black bg-white transition-opacity hover:opacity-90"
             >
-              Commencer
+              {t.landing.cta_start}
             </Link>
           </div>
 
@@ -379,32 +404,16 @@ export default function LandingPage() {
           {/* Text */}
           <div className="order-1 md:order-2">
             <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-3">
-              Librairie de samples
+              {t.landing.section3_tag}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-text mb-6">
-              +1000 Scratch Sounds
+              {t.landing.section3_title}
             </h2>
             <p className="text-text-muted mb-6">
-              Une librairie complète de samples vocaux pensés pour le scratch : ad-libs, phrases, mots et effets classiques.
+              {t.landing.section3_desc}
             </p>
             <div className="space-y-6 mb-8">
-              {[
-                {
-                  color: "#E85D04",
-                  title: "Haute qualité",
-                  desc: "Des samples audio enregistrés et masterisés en studio pour un rendu pro.",
-                },
-                {
-                  color: "#7C3AED",
-                  title: "Originaux",
-                  desc: "Chaque sample est unique, créé spécifiquement pour le scratch sur vinyle.",
-                },
-                {
-                  color: "#0077B6",
-                  title: "Libres de droits",
-                  desc: "Utilise-les sans restriction, gratuitement, dans toutes tes compositions.",
-                },
-              ].map((item) => (
+              {qualities.map((item) => (
                 <div key={item.title} className="flex gap-4">
                   <div
                     className="w-3 h-3 rounded-full mt-1.5 shrink-0"
@@ -421,7 +430,7 @@ export default function LandingPage() {
               href="/composer"
               className="inline-block px-6 py-2.5 rounded-[var(--radius-sm)] text-sm font-bold text-black bg-white transition-opacity hover:opacity-90"
             >
-              Commencer
+              {t.landing.cta_start}
             </Link>
           </div>
         </div>
@@ -432,7 +441,22 @@ export default function LandingPage() {
 
       {/* ── Footer ── */}
       <footer className="px-6 py-8 text-center text-text-muted text-xs">
-        Sklip — Boucles skip-proof pour vinyle
+        <p>{t.landing.footer}</p>
+        <div className="flex items-center justify-center gap-3 mt-3">
+          <button
+            onClick={() => setLocale("fr")}
+            className={`transition-colors ${locale === "fr" ? "text-text font-bold" : "hover:text-text"}`}
+          >
+            {t.footer.lang_fr}
+          </button>
+          <span>·</span>
+          <button
+            onClick={() => setLocale("en")}
+            className={`transition-colors ${locale === "en" ? "text-text font-bold" : "hover:text-text"}`}
+          >
+            {t.footer.lang_en}
+          </button>
+        </div>
       </footer>
     </div>
   );
