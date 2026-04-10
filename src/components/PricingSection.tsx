@@ -67,7 +67,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       {/* Billing selector (paid plans only) */}
       {!plan.free && (
         <div className="relative flex gap-2 mb-5 pt-4">
-          <span className="absolute top-0 right-0 w-[calc(50%-4px)] text-center whitespace-nowrap text-[10px] font-bold bg-accent-orange text-white px-2 py-0.5 rounded-full">
+          <span className="absolute top-0 right-0 whitespace-nowrap text-[10px] font-bold bg-accent-orange text-white px-2 py-0.5 rounded-full">
             {t.pricing.best_value}
           </span>
           <button
@@ -187,8 +187,8 @@ export function PricingSection() {
     { label: t.pricing.features.library_1000, included: true },
     { label: t.pricing.features.unlimited_compositions, included: true },
     { label: t.pricing.features.unlimited_exports, included: true },
-    { label: t.pricing.features.wav_export, included: false },
-    { label: t.pricing.features.upload_samples, included: false },
+    { label: t.pricing.features.wav_export, included: true },
+    { label: t.pricing.features.upload_samples, included: true },
   ];
 
   const plans: Plan[] = [
