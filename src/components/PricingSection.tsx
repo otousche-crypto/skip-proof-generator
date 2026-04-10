@@ -66,7 +66,10 @@ function PlanCard({ plan }: { plan: Plan }) {
 
       {/* Billing selector (paid plans only) */}
       {!plan.free && (
-        <div className="flex gap-2 mb-5">
+        <div className="relative flex gap-2 mb-5 pt-4">
+          <span className="absolute top-0 right-0 w-[calc(50%-4px)] text-center whitespace-nowrap text-[10px] font-bold bg-accent-orange text-white px-2 py-0.5 rounded-full">
+            {t.pricing.best_value}
+          </span>
           <button
             onClick={() => setIsAnnual(false)}
             className={`flex-1 text-xs px-3 py-2 rounded-[var(--radius-sm)] border transition-colors ${
@@ -77,21 +80,16 @@ function PlanCard({ plan }: { plan: Plan }) {
           >
             {t.pricing.monthly}
           </button>
-          <div className="flex-1 relative pt-3.5">
-            <span className="absolute top-0 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-bold bg-accent-orange text-white px-2 py-0.5 rounded-full">
-              {t.pricing.best_value}
-            </span>
-            <button
-              onClick={() => setIsAnnual(true)}
-              className={`w-full text-xs px-3 py-2 rounded-[var(--radius-sm)] border transition-colors ${
-                isAnnual
-                  ? "border-accent-orange text-accent-orange bg-accent-orange/10"
-                  : "border-border text-text-muted hover:border-text-muted"
-              }`}
-            >
-              {t.pricing.annual}
-            </button>
-          </div>
+          <button
+            onClick={() => setIsAnnual(true)}
+            className={`flex-1 text-xs px-3 py-2 rounded-[var(--radius-sm)] border transition-colors ${
+              isAnnual
+                ? "border-accent-orange text-accent-orange bg-accent-orange/10"
+                : "border-border text-text-muted hover:border-text-muted"
+            }`}
+          >
+            {t.pricing.annual}
+          </button>
         </div>
       )}
 
@@ -145,7 +143,7 @@ export function PricingSection() {
   const { t } = useTranslation();
 
   const carouselRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([null, null, null]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([null, null]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleScroll = useCallback(() => {
@@ -193,15 +191,6 @@ export function PricingSection() {
     { label: t.pricing.features.upload_samples, included: false },
   ];
 
-  const STUDIO_FEATURES: Feature[] = [
-    { label: t.pricing.features.full_composer, included: true },
-    { label: t.pricing.features.library_1000, included: true },
-    { label: t.pricing.features.unlimited_compositions, included: true },
-    { label: t.pricing.features.unlimited_exports, included: true },
-    { label: t.pricing.features.wav_export, included: true },
-    { label: t.pricing.features.upload_samples, included: true },
-  ];
-
   const plans: Plan[] = [
     {
       key: "free",
@@ -227,19 +216,6 @@ export function PricingSection() {
       equivMonthly: (39.99 / 12).toFixed(2),
       annualSavings: Math.round(4.99 * 12 - 39.99),
       features: PRO_FEATURES,
-      ctaHref: "/login",
-    },
-    {
-      key: "studio",
-      name: "Studio",
-      subtitle: t.pricing.studio_subtitle,
-      highlight: false,
-      free: false,
-      monthly: 9.99,
-      annualTotal: 79.99,
-      equivMonthly: (79.99 / 12).toFixed(2),
-      annualSavings: Math.round(9.99 * 12 - 79.99),
-      features: STUDIO_FEATURES,
       ctaHref: "/login",
     },
   ];
@@ -300,7 +276,7 @@ export function PricingSection() {
 
       {/* Desktop: grid */}
       <div className="hidden md:block px-6 max-w-6xl mx-auto">
-        <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 gap-6 max-w-3xl mx-auto">
           {plans.map((plan) => (
             <PlanCard key={plan.key} plan={plan} />
           ))}
