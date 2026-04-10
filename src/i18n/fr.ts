@@ -44,6 +44,7 @@ export const fr = {
     monthly: "Mensuel",
     annual: "Annuel",
     save_pct: (pct: number) => `Économise ${pct}%`,
+    best_value: "Le plus intéressant",
     forever: "Pour toujours",
     per_month: "/ mois",
     billed_annually: (price: number) => `Facturé ${price}€/an`,

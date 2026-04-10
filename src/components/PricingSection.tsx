@@ -5,42 +5,55 @@ import { useState, useRef, useCallback } from "react";
 import { Check, X } from "lucide-react";
 import { useTranslation } from "@/i18n/LanguageContext";
 
-const MONTHLY_PRO = 4.99;
-const ANNUAL_PRO = 39.99;
-const EQUIV_PRO = (ANNUAL_PRO / 12).toFixed(2);
-const SAVINGS_PRO = Math.round(MONTHLY_PRO * 12 - ANNUAL_PRO);
-
-const MONTHLY_STUDIO = 9.99;
-const ANNUAL_STUDIO = 79.99;
-const EQUIV_STUDIO = (ANNUAL_STUDIO / 12).toFixed(2);
-const SAVINGS_STUDIO = Math.round(MONTHLY_STUDIO * 12 - ANNUAL_STUDIO);
-
-const SAVINGS_PCT = Math.round(((MONTHLY_PRO * 12 - ANNUAL_PRO) / (MONTHLY_PRO * 12)) * 100);
-
-type Feature = { label: string; included: boolean };
+interface Feature {
+  label: string;
+  included: boolean;
+}
 
 interface Plan {
   key: string;
   name: string;
   subtitle: string;
   highlight: boolean;
-  priceDisplay: string;
-  perMonth: boolean;
-  priceNote: string;
+  free: boolean;
+  monthly: number;
+  annualTotal: number;
+  equivMonthly: string;
+  annualSavings: number;
   features: Feature[];
-  ctaLabel: string;
   ctaHref: string;
 }
 
 function PlanCard({ plan }: { plan: Plan }) {
   const { t } = useTranslation();
+  const [isAnnual, setIsAnnual] = useState(true);
+
+  const priceDisplay = plan.free
+    ? "0€"
+    : isAnnual
+    ? `${plan.equivMonthly}€`
+    : `${plan.monthly}€`;
+
+  const priceNote = plan.free
+    ? t.pricing.forever
+    : isAnnual
+    ? t.pricing.billed_annually(plan.annualTotal)
+    : t.pricing.or_annual(plan.annualTotal, plan.annualSavings);
+
+  const ctaLabel = plan.free
+    ? t.pricing.cta_free
+    : isAnnual
+    ? t.pricing.cta_pro_annual(plan.annualTotal)
+    : t.pricing.cta_pro_monthly(plan.monthly);
+
   return (
     <div
       className={`flex flex-col h-full rounded-[var(--radius)] border bg-surface p-6 ${
         plan.highlight ? "border-accent-orange/50" : "border-border"
       }`}
     >
-      <div className="mb-6">
+      {/* Plan name */}
+      <div className="mb-4">
         <h3
           className={`text-sm font-bold uppercase tracking-widest mb-1 ${
             plan.highlight ? "text-accent-orange" : "text-text-muted"
@@ -48,17 +61,56 @@ function PlanCard({ plan }: { plan: Plan }) {
         >
           {plan.name}
         </h3>
-        <p className="text-xs text-text-muted mb-4">{plan.subtitle}</p>
+        <p className="text-xs text-text-muted">{plan.subtitle}</p>
+      </div>
+
+      {/* Billing selector (paid plans only) */}
+      {!plan.free && (
+        <div className="flex gap-2 mb-5">
+          <button
+            onClick={() => setIsAnnual(false)}
+            className={`flex-1 text-xs px-3 py-2 rounded-[var(--radius-sm)] border transition-colors ${
+              !isAnnual
+                ? "border-accent-orange text-accent-orange bg-accent-orange/10"
+                : "border-border text-text-muted hover:border-text-muted"
+            }`}
+          >
+            {t.pricing.monthly}
+          </button>
+          <div className="flex-1 relative pt-3.5">
+            <span className="absolute top-0 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-bold bg-accent-orange text-white px-2 py-0.5 rounded-full">
+              {t.pricing.best_value}
+            </span>
+            <button
+              onClick={() => setIsAnnual(true)}
+              className={`w-full text-xs px-3 py-2 rounded-[var(--radius-sm)] border transition-colors ${
+                isAnnual
+                  ? "border-accent-orange text-accent-orange bg-accent-orange/10"
+                  : "border-border text-text-muted hover:border-text-muted"
+              }`}
+            >
+              {t.pricing.annual}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Price */}
+      <div className={plan.free ? "mb-6" : "mb-4"}>
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-bold text-text">{plan.priceDisplay}</span>
-          {plan.perMonth && (
+          <span className="text-4xl font-bold text-text">{priceDisplay}</span>
+          {!plan.free && (
             <span className="text-text-muted text-sm">{t.pricing.per_month}</span>
           )}
         </div>
-        <p className="text-xs text-text-muted mt-1">{plan.priceNote}</p>
+        <p className="text-xs text-text-muted mt-1">{priceNote}</p>
       </div>
 
-      <hr className={`mb-6 ${plan.highlight ? "border-accent-orange/20" : "border-border"}`} />
+      <hr
+        className={`mb-6 ${
+          plan.highlight ? "border-accent-orange/20" : "border-border"
+        }`}
+      />
 
       <ul className="space-y-3 flex-1 mb-8">
         {plan.features.map((f) => (
@@ -83,14 +135,13 @@ function PlanCard({ plan }: { plan: Plan }) {
             : "text-text border border-border hover:bg-surface-alt"
         }`}
       >
-        {plan.ctaLabel}
+        {ctaLabel}
       </Link>
     </div>
   );
 }
 
 export function PricingSection() {
-  const [annual, setAnnual] = useState(true);
   const { t } = useTranslation();
 
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -119,7 +170,8 @@ export function PricingSection() {
     const container = carouselRef.current;
     const card = cardRefs.current[index];
     if (!container || !card) return;
-    const offset = card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2;
+    const offset =
+      card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2;
     container.scrollTo({ left: offset, behavior: "smooth" });
   };
 
@@ -156,11 +208,12 @@ export function PricingSection() {
       name: "Free",
       subtitle: t.pricing.free_subtitle,
       highlight: false,
-      priceDisplay: "0€",
-      perMonth: false,
-      priceNote: t.pricing.forever,
+      free: true,
+      monthly: 0,
+      annualTotal: 0,
+      equivMonthly: "0",
+      annualSavings: 0,
       features: FREE_FEATURES,
-      ctaLabel: t.pricing.cta_free,
       ctaHref: "/composer",
     },
     {
@@ -168,15 +221,12 @@ export function PricingSection() {
       name: "Pro",
       subtitle: t.pricing.pro_subtitle,
       highlight: true,
-      priceDisplay: annual ? `${EQUIV_PRO}€` : `${MONTHLY_PRO}€`,
-      perMonth: true,
-      priceNote: annual
-        ? t.pricing.billed_annually(ANNUAL_PRO)
-        : t.pricing.or_annual(ANNUAL_PRO, SAVINGS_PRO),
+      free: false,
+      monthly: 4.99,
+      annualTotal: 39.99,
+      equivMonthly: (39.99 / 12).toFixed(2),
+      annualSavings: Math.round(4.99 * 12 - 39.99),
       features: PRO_FEATURES,
-      ctaLabel: annual
-        ? t.pricing.cta_pro_annual(ANNUAL_PRO)
-        : t.pricing.cta_pro_monthly(MONTHLY_PRO),
       ctaHref: "/login",
     },
     {
@@ -184,15 +234,12 @@ export function PricingSection() {
       name: "Studio",
       subtitle: t.pricing.studio_subtitle,
       highlight: false,
-      priceDisplay: annual ? `${EQUIV_STUDIO}€` : `${MONTHLY_STUDIO}€`,
-      perMonth: true,
-      priceNote: annual
-        ? t.pricing.billed_annually(ANNUAL_STUDIO)
-        : t.pricing.or_annual(ANNUAL_STUDIO, SAVINGS_STUDIO),
+      free: false,
+      monthly: 9.99,
+      annualTotal: 79.99,
+      equivMonthly: (79.99 / 12).toFixed(2),
+      annualSavings: Math.round(9.99 * 12 - 79.99),
       features: STUDIO_FEATURES,
-      ctaLabel: annual
-        ? t.pricing.cta_pro_annual(ANNUAL_STUDIO)
-        : t.pricing.cta_pro_monthly(MONTHLY_STUDIO),
       ctaHref: "/login",
     },
   ];
@@ -211,32 +258,6 @@ export function PricingSection() {
           <p className="text-text-muted text-sm max-w-md mx-auto">
             {t.pricing.subtitle}
           </p>
-
-          {/* Toggle */}
-          <div className="relative flex items-center justify-center gap-3 mt-8">
-            <span className={`text-sm font-medium ${!annual ? "text-text" : "text-text-muted"}`}>
-              {t.pricing.monthly}
-            </span>
-            <button
-              onClick={() => setAnnual(!annual)}
-              className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${
-                annual ? "bg-accent-orange" : "bg-surface-alt"
-              }`}
-            >
-              <span
-                className="absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-200"
-                style={{ left: annual ? "calc(100% - 20px)" : "4px" }}
-              />
-            </button>
-            <div className="flex flex-col items-start">
-              <span className={`text-sm font-medium ${annual ? "text-text" : "text-text-muted"}`}>
-                {t.pricing.annual}
-              </span>
-              <span className="text-xs font-bold text-accent-orange">
-                {t.pricing.save_pct(SAVINGS_PCT)}
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -251,7 +272,9 @@ export function PricingSection() {
           {plans.map((plan, i) => (
             <div
               key={plan.key}
-              ref={(el) => { cardRefs.current[i] = el; }}
+              ref={(el) => {
+                cardRefs.current[i] = el;
+              }}
               className="snap-center shrink-0 w-[85vw]"
             >
               <PlanCard plan={plan} />

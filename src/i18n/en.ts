@@ -44,6 +44,7 @@ export const en = {
     monthly: "Monthly",
     annual: "Annual",
     save_pct: (pct: number) => `Save ${pct}%`,
+    best_value: "Best value",
     forever: "Forever",
     per_month: "/ month",
     billed_annually: (price: number) => `Billed ${price}€/year`,
