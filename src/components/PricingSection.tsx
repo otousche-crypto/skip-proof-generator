@@ -72,7 +72,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       {!plan.free && (
         <div className="relative flex gap-2 mb-5 pt-4">
           <span className="absolute top-0 right-0 whitespace-nowrap text-[10px] font-bold bg-accent-orange text-white px-2 py-0.5 rounded-full">
-            −{savingsPct}%
+            {t.pricing.save_pct(savingsPct)}
           </span>
           <button
             onClick={() => setIsAnnual(false)}
