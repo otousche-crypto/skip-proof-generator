@@ -28,6 +28,10 @@ function PlanCard({ plan }: { plan: Plan }) {
   const { t } = useTranslation();
   const [isAnnual, setIsAnnual] = useState(true);
 
+  const savingsPct = !plan.free
+    ? Math.round((plan.annualSavings / (plan.monthly * 12)) * 100)
+    : 0;
+
   const priceDisplay = plan.free
     ? "0€"
     : isAnnual
@@ -38,7 +42,7 @@ function PlanCard({ plan }: { plan: Plan }) {
     ? t.pricing.forever
     : isAnnual
     ? t.pricing.billed_annually(plan.annualTotal)
-    : t.pricing.or_annual(plan.annualTotal, plan.annualSavings);
+    : t.pricing.monthly_total((plan.monthly * 12).toFixed(2));
 
   const ctaLabel = plan.free
     ? t.pricing.cta_free
@@ -68,7 +72,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       {!plan.free && (
         <div className="relative flex gap-2 mb-5 pt-4">
           <span className="absolute top-0 right-0 whitespace-nowrap text-[10px] font-bold bg-accent-orange text-white px-2 py-0.5 rounded-full">
-            {t.pricing.best_value}
+            −{savingsPct}%
           </span>
           <button
             onClick={() => setIsAnnual(false)}

@@ -36,7 +36,7 @@ export const fr = {
   },
   pricing: {
     tag: "Tarifs",
-    title: "Simple et transparent",
+    title: "Moins chère qu'un vinyle",
     subtitle: "Commence gratuitement. Passe au Pro quand tu veux débloquer toute la librairie.",
     free_subtitle: "Pour découvrir l'outil.",
     pro_subtitle: "Pour les DJs actifs.",
@@ -49,6 +49,7 @@ export const fr = {
     per_month: "/ mois",
     billed_annually: (price: number) => `Facturé ${price}€/an`,
     or_annual: (annual: number, savings: number) => `Ou ${annual}€/an — économise ${savings}€`,
+    monthly_total: (total: string) => `soit ${total}€/an au tarif mensuel`,
     cta_free: "Commencer gratuitement",
     cta_pro_annual: (price: number) => `Démarrer à ${price}€/an`,
     cta_pro_monthly: (price: number) => `Démarrer à ${price}€/mois`,
